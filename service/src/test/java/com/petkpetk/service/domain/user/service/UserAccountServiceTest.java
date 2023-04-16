@@ -15,15 +15,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.petkpetk.service.domain.user.constant.RoleType;
-import com.petkpetk.service.domain.user.constant.SignUpProvider;
+import com.petkpetk.service.common.RoleType;
+import com.petkpetk.service.config.security.oauth2.OAuth2ProviderInfo;
 import com.petkpetk.service.domain.user.dto.UserAccountDto;
 import com.petkpetk.service.domain.user.entity.Address;
 import com.petkpetk.service.domain.user.entity.UserAccount;
-import com.petkpetk.service.domain.user.exception.UserAccountDuplicateException;
+import com.petkpetk.service.domain.user.exception.UserDuplicateException;
 import com.petkpetk.service.domain.user.repository.UserAccountRepository;
 
+@Transactional
 @DisplayName("UserAccountService 테스트")
 public class UserAccountServiceTest {
 
@@ -43,21 +45,21 @@ public class UserAccountServiceTest {
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
 
-		userAccountDto = UserAccountDto.of(1L, "email@email.com", "password", "홍길동", "길동", Address.of("34589","서울특별시 광진구","자바동","기타"), "profileUrl",
-			SignUpProvider.NAVER, Set.of(RoleType.USER));
+		userAccountDto = UserAccountDto.of(1L, "email@email.com", "password", "홍길동", "길동",
+			Address.of("34589", "서울특별시 광진구", "자바동", "기타"), "profileUrl", OAuth2ProviderInfo.NAVER, Set.of(RoleType.USER));
 		userAccount = userAccountDto.toEntity();
 
 		when(userAccountRepository.save(userAccount)).thenReturn(userAccount);
 	}
 
 	@Test
-	@DisplayName("중복된 이메일이 있는 경우 예외를 던진다")
+	@DisplayName("중복된 이메일이 있는 경우 UserAccountDuplicateException 예외를 던진다")
 	public void saveTest_duplicateEmail() {
 		// given
 		when(userAccountRepository.findByEmail(any(String.class))).thenReturn(Optional.of(new UserAccount()));
 
 		// when, then
-		assertThrows(UserAccountDuplicateException.class, () -> userAccountService.save(userAccountDto));
+		assertThrows(UserDuplicateException.class, () -> userAccountService.save(userAccountDto));
 
 		verify(userAccountRepository, times(1)).findByEmail(any(String.class));
 		verifyNoMoreInteractions(userAccountRepository);
@@ -88,11 +90,10 @@ public class UserAccountServiceTest {
 		when(userAccountRepository.findByEmail(email)).thenReturn(Optional.of(userAccount));
 
 		// when
-		Optional<UserAccountDto> result = userAccountService.searchUser(email);
+		Optional<UserAccountDto> result = userAccountService.searchUserDto(email);
 
 		// then
 		assertThat(result).isPresent();
 		assertThat(result.get().getEmail()).isEqualTo(email);
 	}
-
 }

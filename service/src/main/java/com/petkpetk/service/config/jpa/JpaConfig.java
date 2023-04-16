@@ -1,5 +1,7 @@
 package com.petkpetk.service.config.jpa;
 
+import java.util.Optional;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
@@ -8,11 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.util.Optional;
-
-import com.petkpetk.service.domain.user.dto.request.UserAccountRequest;
 import com.petkpetk.service.domain.user.dto.security.UserAccountPrincipal;
-import com.petkpetk.service.domain.user.entity.UserAccount;
 
 @EnableJpaAuditing
 @Configuration
@@ -35,9 +33,3 @@ public class JpaConfig {
 		return Optional::empty;
 	}
 }
-
-
-
-
-
-

@@ -13,7 +13,7 @@ package com.petkpetk.service.domain.user.entity.notuse;// package com.petkpetk.s
 // import javax.persistence.ManyToOne;
 // import javax.persistence.Table;
 //
-// import com.petkpetk.service.domain.user.constant.RoleType;
+// import com.petkpetk.service.common.RoleType;
 //
 // import lombok.AllArgsConstructor;
 // import lombok.Getter;

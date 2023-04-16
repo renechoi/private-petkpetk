@@ -2,7 +2,6 @@ package com.petkpetk.service.config.security;
 
 import java.io.IOException;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -12,10 +11,11 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
 	@Override
-	public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
+	public void commence(HttpServletRequest request, HttpServletResponse response,
+		AuthenticationException authException) throws IOException {
 		authException.printStackTrace();
-		response.sendError(HttpServletResponse.SC_UNAUTHORIZED, request.getAuthType() + "and " + authException.getLocalizedMessage());
-		// response.sendRedirect("/error/4xx.html");
+		// response.sendError(HttpServletResponse.SC_UNAUTHORIZED, request.getAuthType() + "and " + authException.getLocalizedMessage());
+		response.sendRedirect("/error/4xx.html");
 	}
 
 }

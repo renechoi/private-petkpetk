@@ -24,9 +24,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.petkpetk.service.common.AuditingFields;
-import com.petkpetk.service.common.converter.RoleTypeConverter;
-import com.petkpetk.service.domain.user.constant.RoleType;
-import com.petkpetk.service.domain.user.constant.SignUpProvider;
+import com.petkpetk.service.config.converter.RoleTypeConverter;
+import com.petkpetk.service.common.RoleType;
+import com.petkpetk.service.config.security.oauth2.OAuth2ProviderInfo;
+import com.petkpetk.service.domain.user.dto.UserAccountDto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,11 +38,7 @@ import lombok.ToString;
 @Setter
 @ToString(callSuper = true)
 @NoArgsConstructor
-@Table(
-	indexes = {
-		@Index(columnList = "email"),
-		@Index(columnList = "createdAt"),
-		@Index(columnList = "createdBy")})
+@Table(indexes = {@Index(columnList = "email"), @Index(columnList = "createdAt"), @Index(columnList = "createdBy")})
 @Entity
 public class UserAccount extends AuditingFields implements Serializable {
 
@@ -67,30 +64,29 @@ public class UserAccount extends AuditingFields implements Serializable {
 	@Size(max = 512)
 	private String profileImage;
 
+	@Column(name="oauth2_provider_info")
 	@Enumerated(EnumType.STRING)
-	private SignUpProvider signUpProvider;
+	private OAuth2ProviderInfo OAuth2ProviderInfo;
 
 	@Column(nullable = false)
 	@Convert(converter = RoleTypeConverter.class)
 	private Set<RoleType> roles = new LinkedHashSet<>();
 
 	public UserAccount(String email, String password, String name, String nickname, Address address,
-		String profileImage,
-		SignUpProvider signUpProvider, Set<RoleType> roles) {
+		String profileImage, OAuth2ProviderInfo OAuth2ProviderInfo, Set<RoleType> roles) {
 		this.email = email;
 		this.password = password;
 		this.name = name;
 		this.nickname = nickname;
 		this.address = address;
 		this.profileImage = profileImage;
-		this.signUpProvider = signUpProvider;
+		this.OAuth2ProviderInfo = OAuth2ProviderInfo;
 		this.roles = roles;
 	}
 
 	public static UserAccount of(String email, String password, String name, String nickname, Address address,
-		String profileImage,
-		SignUpProvider signUpProvider, Set<RoleType> roles) {
-		return new UserAccount(email, password, name, nickname, address, profileImage, signUpProvider, roles);
+		String profileImage, OAuth2ProviderInfo OAuth2ProviderInfo, Set<RoleType> roles) {
+		return new UserAccount(email, password, name, nickname, address, profileImage, OAuth2ProviderInfo, roles);
 	}
 
 	public UserAccount encodePassword(PasswordEncoder passwordEncoder) {
@@ -100,6 +96,25 @@ public class UserAccount extends AuditingFields implements Serializable {
 
 	public boolean checkPassword(String thatPassword, PasswordEncoder passwordEncoder) {
 		return passwordEncoder.matches(thatPassword, this.password);
+	}
+
+	public void update(UserAccountDto userAccountDto) {
+		this.email = userAccountDto.getEmail();
+		this.password = userAccountDto.getPassword();
+		this.name = userAccountDto.getName();
+		this.nickname = userAccountDto.getNickname();
+		this.address = userAccountDto.getAddress();
+		this.profileImage = userAccountDto.getProfileImage();
+		this.roles = userAccountDto.getRoles();
+	}
+
+	@PrePersist
+	public void anonymousSetup() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication != null && "anonymousUser".equals(authentication.getName())) {
+			this.createdBy = this.getName();
+			this.modifiedBy = this.getName();
+		}
 	}
 
 	@Override
@@ -118,13 +133,5 @@ public class UserAccount extends AuditingFields implements Serializable {
 		return Objects.hash(this.getId());
 	}
 
-	@PrePersist
-	public void anonymousSetup() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if ("anonymousUser".equals(authentication.getName())) {
-			this.createdBy = this.getName();
-			this.modifiedBy = this.getName();
-		}
-	}
 }
 

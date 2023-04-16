@@ -21,7 +21,7 @@ package com.petkpetk.service.domain.user.entity.notuse;// package com.petkpetk.s
 //
 // import com.petkpetk.service.common.AuditingFields;
 // import com.petkpetk.service.config.security.PasswordEncoderConfig;
-// import com.petkpetk.service.domain.user.constant.RoleType;
+// import com.petkpetk.service.common.RoleType;
 //
 // import lombok.Getter;
 // import lombok.NoArgsConstructor;

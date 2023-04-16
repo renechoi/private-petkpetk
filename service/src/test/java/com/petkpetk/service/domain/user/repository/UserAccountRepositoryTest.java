@@ -13,12 +13,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.petkpetk.service.domain.user.constant.RoleType;
-import com.petkpetk.service.domain.user.constant.SignUpProvider;
+import com.petkpetk.service.common.RoleType;
+import com.petkpetk.service.config.security.oauth2.OAuth2ProviderInfo;
 import com.petkpetk.service.domain.user.entity.Address;
 import com.petkpetk.service.domain.user.entity.UserAccount;
 
+@Transactional
 @DisplayName("UserAccountRepository 테스트")
 @ExtendWith(MockitoExtension.class)
 public class UserAccountRepositoryTest {
@@ -31,7 +33,7 @@ public class UserAccountRepositoryTest {
 	void setUp() {
 		userAccount = UserAccount.of("lee@email.com", "password", "이순신", "닉네임",
 			Address.of("34589", "서울특별시 광진구", "자바동", "기타"), "profileUrl",
-			SignUpProvider.NAVER, Set.of(RoleType.USER));
+			OAuth2ProviderInfo.NAVER, Set.of(RoleType.USER));
 	}
 
 	@DisplayName("유저 계정 저장을 테스트 한다")
