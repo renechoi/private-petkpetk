@@ -31,12 +31,15 @@ ul {
     justify-content: space-between;
 }
 
+
+
 .head {
     display: flex;
     justify-content: space-between;
     padding: 0 60px;
     background-color: #FF5F75;
     font-size: 16px;
+
 }
 .head div a{
     text-decoration: none;
@@ -60,19 +63,6 @@ ul {
     animation-iteration-count: 4;
     animation-direction: alternate;
 }
-
-.profile {
-    cursor: pointer;
-    margin-left: 20px;
-    margin-right: 30px;
-    margin-top: 8px;
-    width: 35px;
-    height: 35px;
-    border: 1px solid #ffe7eb;
-    background-color: #ffffff;
-    border-radius: 20px;
-}
-
 @keyframes twinkle {
     from {
         transform: rotate(0deg);
@@ -81,6 +71,19 @@ ul {
         transform: rotate(5deg);
     }
 }
+
+.profile {
+cursor: pointer;
+margin-left: 20px;
+margin-right: 30px;
+margin-top: 8px;
+width: 35px;
+height: 35px;
+border: 1px solid #ffe7eb;
+background-color: #ffffff;
+border-radius: 20px;
+}
+
 .main, .main2{
     background-color: white;
     z-index: 110;
@@ -90,15 +93,21 @@ ul {
 .main {
     padding: 0 10%;
     border-bottom: 1px solid #cbcbcb;
-    box-shadow: 0px 2px 3px 0px #dedede;
+    box-shadow: 0px 2px 3px 0px rgba(0, 0, 0, 0.08);
     margin-bottom: 30px;
 }
 
 .jumped1{
-    margin-top: 160px;
+    margin-top: 140px;
 }
 .jumped2{
     margin-top: 95px;
+}
+.jumped7{
+    margin-top: 115px;
+}
+.jumped8{
+    margin-top: 145px;
 }
 
 .fixed{
@@ -107,7 +116,7 @@ ul {
 }
 
 .mainMenu {
-    padding: 40px;
+    padding: 20px;
     display: flex;
 
 }
@@ -115,8 +124,8 @@ ul {
 .logo-img {
     cursor: pointer;
     margin-top: 7px;
-    width: 200px;
-    height: 123px;
+    width: 135px;
+    height: 80px;
 }
 
 .mainMenu li {

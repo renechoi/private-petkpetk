@@ -1,5 +1,10 @@
 var mainZone = document.getElementById("mainZone");
 var itemDetailContainer = document.getElementById("itemDetailContainer");
+var addItemContainer = document.getElementById("addItemContainer");
+var itemMngContainer = document.getElementById("itemMngContainer");
+
+
+
 $(".menubar").on("click", function () {
 
     if(!mainZone){
@@ -8,6 +13,24 @@ $(".menubar").on("click", function () {
             mainZone.style.display = "none";
         } else {
             mainZone.style.display = "block";
+        }
+    }
+
+    if(!itemMngContainer){
+    }else{
+        if (itemMngContainer.style.display === "flex") {
+            itemMngContainer.style.display = "none";
+        } else {
+            itemMngContainer.style.display = "flex";
+        }
+    }
+
+    if(!addItemContainer){
+    }else{
+        if (addItemContainer.style.display === "flex") {
+            addItemContainer.style.display = "none";
+        } else {
+            addItemContainer.style.display = "flex";
         }
     }
 

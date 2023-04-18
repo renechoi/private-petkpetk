@@ -7,6 +7,7 @@ footer{
     display: flex;
     font-size: 13px;
     height: 280px ;
+    position: relative;
 }
 
 footer a{
@@ -32,6 +33,14 @@ footer li{
 
 .gray{
     color: #ababab;
+}
+
+.moala {
+    width: 150px;
+    height: 150px;
+    position: absolute;
+    left: 28%;
+    bottom: 80px;
 }
 
 @media screen and (max-width: 880px) {

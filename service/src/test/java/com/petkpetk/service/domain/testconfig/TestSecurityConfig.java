@@ -11,15 +11,16 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.event.annotation.BeforeTestMethod;
 
+import com.petkpetk.service.config.security.OAuth2Config;
 import com.petkpetk.service.config.security.SecurityConfig;
 import com.petkpetk.service.common.RoleType;
 import com.petkpetk.service.config.security.oauth2.OAuth2ProviderInfo;
 import com.petkpetk.service.domain.user.dto.UserAccountDto;
-import com.petkpetk.service.domain.user.entity.Address;
+import com.petkpetk.service.domain.user.entity.embedded.Address;
 import com.petkpetk.service.domain.user.entity.UserAccount;
 import com.petkpetk.service.domain.user.service.UserAccountService;
 
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, OAuth2Config.class})
 @SpringBootTest
 public class TestSecurityConfig {
 	@MockBean
