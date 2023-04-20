@@ -1,6 +1,5 @@
 package com.petkpetk.service.domain.shopping.dto.item.response;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,8 +11,6 @@ import com.petkpetk.service.config.converter.EntityAndDtoConverter;
 import com.petkpetk.service.domain.shopping.constant.ItemStatus;
 import com.petkpetk.service.domain.shopping.dto.item.ItemImageDto;
 import com.petkpetk.service.domain.shopping.entity.item.Item;
-import com.petkpetk.service.domain.shopping.entity.item.ItemImage;
-import com.petkpetk.service.domain.user.entity.SellerAccount;
 import com.petkpetk.service.domain.user.entity.UserAccount;
 
 import lombok.AllArgsConstructor;
@@ -42,10 +39,7 @@ public class ItemResponse {
 
 	private UserAccount userAccount;
 
-
 	private List<ItemImageDto> itemImageDtos = new ArrayList<>();
-
-
 
 	public Item toEntity() {
 		return Item.of(
@@ -74,15 +68,11 @@ public class ItemResponse {
 		return new ItemResponse(itemName, price, itemAmount, itemDetail, itemStatus, userAccount);
 	}
 
-
 	public static ItemResponse from(Item item) {
 		ItemResponse itemResponse = EntityAndDtoConverter.convertToDto(item, ItemResponse.class);
 		itemResponse.setItemImageDtos(item.getImages().stream().map(ItemImageDto::from).collect(Collectors.toList()));
 		return itemResponse;
 	}
-
-
-
 
 	public static ItemResponse of(Item itemEntity, List<ItemImageDto> itemImageDtos) {
 		return new ItemResponse(

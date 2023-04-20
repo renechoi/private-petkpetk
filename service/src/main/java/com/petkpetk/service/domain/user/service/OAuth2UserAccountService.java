@@ -22,11 +22,6 @@ import com.petkpetk.service.domain.user.entity.embedded.Address;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * OAuth@UserService 클래스명을 spring security 이미 사용하고 있어서
- * SocialUserService 명명
- */
-
 @Slf4j
 @Service
 @Transactional

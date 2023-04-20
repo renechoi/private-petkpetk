@@ -5,6 +5,7 @@ import java.util.Set;
 import com.petkpetk.service.config.converter.EntityAndDtoConverter;
 import com.petkpetk.service.common.RoleType;
 import com.petkpetk.service.config.security.oauth2.OAuth2ProviderInfo;
+import com.petkpetk.service.domain.user.entity.ProfileImage;
 import com.petkpetk.service.domain.user.entity.embedded.Address;
 import com.petkpetk.service.domain.user.entity.UserAccount;
 
@@ -28,11 +29,32 @@ public class UserAccountDto {
 	private OAuth2ProviderInfo OAuth2ProviderInfo;
 	private Set<RoleType> roles;
 
+	private ProfileImage profile;
+
 	private String phoneNumber;
 
 	private String businessName;
 
 	private String businessNumber;
+
+	public UserAccountDto(Long id, String email, String password, String name, String nickname, Address address,
+		String profileImage, com.petkpetk.service.config.security.oauth2.OAuth2ProviderInfo OAuth2ProviderInfo,
+		Set<RoleType> roles, String phoneNumber, String businessName, String businessNumber) {
+		this.id = id;
+		this.email = email;
+		this.password = password;
+		this.name = name;
+		this.nickname = nickname;
+		this.address = address;
+		this.profileImage = profileImage;
+		this.OAuth2ProviderInfo = OAuth2ProviderInfo;
+		this.roles = roles;
+		this.phoneNumber = phoneNumber;
+		this.businessName = businessName;
+		this.businessNumber = businessNumber;
+	}
+
+
 
 	public UserAccount toEntity() {
 		return EntityAndDtoConverter.convertToEntity(this, UserAccount.class);
@@ -45,6 +67,11 @@ public class UserAccountDto {
 	public static UserAccountDto of(Long id, String email, String password, String name, String nickname,
 		Address address, String profileImage, OAuth2ProviderInfo OAuth2ProviderInfo, Set<RoleType> roles, String phoneNumber, String businessName, String businessNumber) {
 		return new UserAccountDto(id, email, password, name, nickname, address, profileImage, OAuth2ProviderInfo, roles,phoneNumber,businessName,businessNumber);
+	}
+
+	public static UserAccountDto of(Long id, String email, String password, String name, String nickname,
+		Address address, String profileImage, OAuth2ProviderInfo OAuth2ProviderInfo, Set<RoleType> roles, ProfileImage profile, String phoneNumber, String businessName, String businessNumber) {
+		return new UserAccountDto(id, email, password, name, nickname, address, profileImage, OAuth2ProviderInfo, roles, profile, phoneNumber,businessName,businessNumber);
 	}
 
 	// TODO : update 수행을 dto가 아닌 entity에서 직접 담당하게 하는 것이 맞는 것으로 판단. 이점에 대한 추후 재고 필요.

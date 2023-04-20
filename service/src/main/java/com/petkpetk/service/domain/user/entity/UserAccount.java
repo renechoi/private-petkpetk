@@ -2,9 +2,11 @@ package com.petkpetk.service.domain.user.entity;
 
 import java.io.Serializable;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Embedded;
@@ -15,6 +17,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
+import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
@@ -74,6 +77,10 @@ public class UserAccount extends AuditingFields implements Serializable {
 	@Convert(converter = RoleTypeConverter.class)
 	private Set<RoleType> roles = new LinkedHashSet<>();
 
+	@OneToOne(mappedBy = "userAccount", cascade = CascadeType.ALL, orphanRemoval = true)
+	@ToString.Exclude
+	private ProfileImage profile;
+
 	private String phoneNumber;
 
 	private String businessName;
@@ -92,9 +99,36 @@ public class UserAccount extends AuditingFields implements Serializable {
 		this.roles = roles;
 	}
 
+	public UserAccount(String email, String password, String name, String nickname, Address address,
+		String profileImage, OAuth2ProviderInfo OAuth2ProviderInfo, Set<RoleType> roles, ProfileImage profile, String phoneNumber, String businessName, String businessNumber) {
+		this.email = email;
+		this.password = password;
+		this.name = name;
+		this.nickname = nickname;
+		this.address = address;
+		this.profileImage = profileImage;
+		this.OAuth2ProviderInfo = OAuth2ProviderInfo;
+		this.roles = roles;
+		this.profile =addImages(profile);
+		this.phoneNumber = phoneNumber;
+		this.businessName = businessName;
+		this.businessNumber = businessNumber;
+	}
+
 	public static UserAccount of(String email, String password, String name, String nickname, Address address,
 		String profileImage, OAuth2ProviderInfo OAuth2ProviderInfo, Set<RoleType> roles) {
 		return new UserAccount(email, password, name, nickname, address, profileImage, OAuth2ProviderInfo, roles);
+	}
+
+	public static UserAccount of(String email, String password, String name, String nickname, Address address,
+		String profileImage, OAuth2ProviderInfo OAuth2ProviderInfo, Set<RoleType> roles, ProfileImage profile, String phoneNumber, String businessName, String businessNumber) {
+		return new UserAccount(email, password, name, nickname, address, profileImage, OAuth2ProviderInfo, roles, profile, phoneNumber, businessName, businessNumber);
+	}
+
+
+	private ProfileImage addImages(ProfileImage profile) {
+		profile.mapWith(this);
+		return profile;
 	}
 
 	public UserAccount encodePassword(PasswordEncoder passwordEncoder) {

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.petkpetk.service.common.RoleType;
 import com.petkpetk.service.config.security.oauth2.OAuth2ProviderInfo;
 import com.petkpetk.service.domain.user.dto.UserAccountDto;
+import com.petkpetk.service.domain.user.entity.ProfileImage;
 import com.petkpetk.service.domain.user.entity.embedded.Address;
 
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,7 @@ public class OidcUserAccountService implements OAuth2UserService<OidcUserRequest
 			oidcUser.getAttributes().get("picture").toString(),
 			OAuth2ProviderInfo.GOOGLE,
 			Set.of(RoleType.USER),
+			ProfileImage.of(oidcUser.getAttributes().get("picture").toString()),
 			null,
 			null,
 			null

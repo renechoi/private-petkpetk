@@ -11,7 +11,8 @@ import java.util.UUID;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.petkpetk.service.config.properties.Property;
+import com.petkpetk.service.common.PetkpetkImage;
+import com.petkpetk.service.config.properties.LocalProperty;
 import com.petkpetk.service.domain.shopping.exception.ImageUploadFailureException;
 
 @Component
@@ -54,7 +55,7 @@ public class ImageLocalRepository<T extends PetkpetkImage> {
 	}
 
 	private String getSystemStorage() {
-		return Property.getInstance().getItemLocalStorage();
+		return LocalProperty.getInstance().getItemLocalStorage();
 	}
 
 }

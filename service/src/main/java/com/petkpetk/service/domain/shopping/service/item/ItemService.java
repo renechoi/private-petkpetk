@@ -1,8 +1,6 @@
 package com.petkpetk.service.domain.shopping.service.item;
 
-import static org.apache.logging.log4j.ThreadContext.*;
-
-import java.util.ArrayList;
+import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -14,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.petkpetk.service.common.PetkpetkImage;
+import com.petkpetk.service.config.converter.ImageConverter;
 import com.petkpetk.service.config.file.ImageLocalRepository;
 import com.petkpetk.service.domain.shopping.dto.item.ItemDto;
 import com.petkpetk.service.domain.shopping.dto.item.ItemImageDto;
@@ -53,8 +53,14 @@ public class ItemService {
 	}
 
 	public void registerItem(ItemDto itemDto) {
-		List<ItemImage> images = convertToImages(itemDto);
-		
+		// List<ItemImage> images = convertToImages(itemDto.getRawImages());
+		// List<ItemImage> images = RawImageConverter.toPetkpetkImages(itemDto.getRawImages());
+
+		ImageConverter<ItemImage> itemImageConverter = new ImageConverter<>(ItemImage::from);
+		List<ItemImage> images = itemImageConverter.convertToImages(itemDto.getRawImages());
+
+
+
 		// 영속화 
 		itemRepository.save(itemDto.toEntity(images));
 
@@ -64,18 +70,18 @@ public class ItemService {
 	}
 
 
-	public ItemResponse updateItem2(ItemRegisterRequest itemRegisterRequest) {
+	public ItemResponse updateItem(ItemRegisterRequest itemUpdateRequest) {
 
-		Item item = itemRepository.findById(itemRegisterRequest.getId()).orElseThrow(ItemNotFoundException::new);
+		Item item = itemRepository.findById(itemUpdateRequest.getId()).orElseThrow(ItemNotFoundException::new);
 		List<ItemImage> itemImages = item.getImages();
-		itemRegisterRequest.getImages().removeIf(MultipartFile::isEmpty);
+		itemUpdateRequest.getImages().removeIf(MultipartFile::isEmpty);
 
-		List<ItemImage> notModifiedImages = itemRegisterRequest.getItemImageDtos()
+		List<ItemImage> notModifiedImages = itemUpdateRequest.getItemImageDtos()
 			.stream()
 			.map(ItemImageDto::getOriginalName)
 			.map(itemImageRepository::findByOriginalName).collect(Collectors.toList());
 
-		List<ItemImage> newlyAddedImages = itemRegisterRequest.getImages().stream()
+		List<ItemImage> newlyAddedImages = itemUpdateRequest.getImages().stream()
 			.map(ItemImage::from).collect(Collectors.toList());
 
 		List<ItemImage> allRequestedImages = Stream.concat(notModifiedImages.stream(), newlyAddedImages.stream())
@@ -90,7 +96,7 @@ public class ItemService {
 		imageLocalRepository.deleteFiles(imagesToDelete);
 
 		IntStream.range(0, newlyAddedImages.size())
-			.forEach(image -> imageLocalRepository.save(newlyAddedImages.get(image), itemRegisterRequest.getImages().get(image)));
+			.forEach(image -> imageLocalRepository.save(newlyAddedImages.get(image), itemUpdateRequest.getImages().get(image)));
 
 
 		// todo: db에서 가져온 itemImages 중에 notModifiedImages에 해당하는 itemImage가 없으면 삭제 대상
@@ -125,12 +131,6 @@ public class ItemService {
 		return itemImageRepository.findByItemIdOrderByIdAsc(id);
 	}
 
-	private static List<ItemImage> convertToImages(ItemDto itemDto) {
-		return itemDto.getRawImages()
-			.stream()
-			.filter(image -> !image.isEmpty())
-			.map(ItemImage::from)
-			.collect(Collectors.toList());
-	}
+
 
 }

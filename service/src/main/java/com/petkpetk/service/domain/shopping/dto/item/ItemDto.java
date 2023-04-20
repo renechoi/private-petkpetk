@@ -58,25 +58,10 @@ public class ItemDto {
 	}
 
 
-
 	public static ItemDto from(Item item){
 		return EntityAndDtoConverter.convertToDto(item, ItemDto.class);
 	}
 
-	//
-	// /** TODO : 잘못된 방식 !!!
-	//  * 이 문제는 Item 객체가 영속 상태가 되기 전에 ItemImage 객체를 저장하려고 할 때 발생하는 것입니다. 즉, ItemImage 객체가 저장될 때 item 속성이 null로 설정되기 때문에 item_id 컬럼에는 null 값이 저장됩니다.
-	//  *
-	//  * 해결책으로는 다음 두 가지 방법이 있습니다.
-	//  *
-	//  * Item 객체를 영속 상태로 만들고 ItemImage 객체를 저장합니다.
-	//  * 이 방법은 ItemImage 객체를 저장하기 전에 Item 객체를 저장하고 영속 상태로 만들어야 합니다.
-	//  * 이렇게 하면 ItemImage 객체에서 Item 객체를 참조할 때 null 값을 가리키지 않게 됩니다.
-	//  * 따라서 ItemImage 객체가 영속성 컨텍스트에 존재하는 Item 객체를 참조할 수 있게 됩니다.
-	//  * @param images
-	//  * @return
-	//  */
-	//
 	public Item toEntity(List<ItemImage> images) {
 		return Item.of(
 			this.itemName,
@@ -100,17 +85,7 @@ public class ItemDto {
 			this.userAccount
 		);
 	}
-	//
-	// public Item toEntity() {
-	// 	return Item.of(
-	// 		this.itemName,
-	// 		this.price,
-	// 		this.itemAmount,
-	// 		this.itemDetail,
-	// 		this.itemStatus,
-	// 		this.userAccount
-	// 	);
-	// }
+
 
 	public static ItemDto from(ItemRegisterRequest itemRegisterRequest, UserAccount userAccount) {
 		return new ItemDto(

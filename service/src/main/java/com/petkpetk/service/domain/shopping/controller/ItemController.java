@@ -16,14 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.petkpetk.service.config.exception.PetkpetkServerException;
 import com.petkpetk.service.domain.shopping.dto.item.ItemDto;
 import com.petkpetk.service.domain.shopping.dto.item.ItemImageDto;
 import com.petkpetk.service.domain.shopping.dto.item.request.ItemRegisterRequest;
 import com.petkpetk.service.domain.shopping.dto.item.response.ItemResponse;
 import com.petkpetk.service.domain.shopping.service.item.ItemService;
-import com.petkpetk.service.domain.user.entity.UserAccount;
-import com.petkpetk.service.domain.user.service.SellerAccountService;
 import com.petkpetk.service.domain.user.service.UserAccountService;
 
 import lombok.RequiredArgsConstructor;
@@ -36,7 +33,6 @@ import lombok.extern.slf4j.Slf4j;
 public class ItemController {
 
 	private final ItemService itemService;
-	private final SellerAccountService sellerAccountService;
 	private final UserAccountService userAccountService;
 
 	@GetMapping("/my-page")
@@ -54,7 +50,8 @@ public class ItemController {
 	// 상품 등록
 	@PostMapping("/new")
 	public String registerItem(@Valid ItemRegisterRequest itemRegisterRequest, Authentication authentication) {
-		itemService.registerItem(ItemDto.from(itemRegisterRequest, getCurrentPrincipal(authentication)));
+		itemService.registerItem(
+			ItemDto.from(itemRegisterRequest, userAccountService.getCurrentPrincipal(authentication)));
 		return "redirect:/";
 	}
 
@@ -78,7 +75,7 @@ public class ItemController {
 	// 상품 수정
 	@PostMapping("/modify/{itemId}")
 	public String modifyItem(
-		ItemRegisterRequest itemRegisterRequest,
+		ItemRegisterRequest itemUpdateRequest,
 		BindingResult bindingResult, Model model,
 		@RequestParam("images") List<MultipartFile> rawImages,
 		@RequestParam("imageNames") List<String> imageNames) {
@@ -90,21 +87,20 @@ public class ItemController {
 
 		// TODO: 대표이미지 정하라는 메시지는 register랑 다르게 나가야 함
 
-
 		// TODO: requestParam으로 별도로 받는 images, imagesNames는 itemRequest 객체에서 필드로 images와 itemDtos를 갖고 있기 때문에 별도로 받을 필요가 없다.
 		//  하지만 해당 fields는 collection으로 존재하기 때문에 내부 객체가 개수로서 정의되어 있지 않고 따라서 각 객체마다 별도 초기화가 필요하다.
 		//  이와 같은 이유 때문에 thymeleaf에서 name 값으로
 		//   name="itemImageDtos[${status.index}].originalName" 주는 방식이 불가능하다.
 		//  이점을 추후 리팩토링 과제로 삼아볼만하다고 생각되며, 더불어서 이 방식이 가능하다며 현재 itemResponse로 송추되는 데이터 객체를 request로 변경하는 것이 바람직하겠다
 
-		itemRegisterRequest.setImages(rawImages);
+		itemUpdateRequest.setImages(rawImages);
 		IntStream.range(0, imageNames.size())
-			.forEach(i -> itemRegisterRequest.getItemImageDtos().add(ItemImageDto.of(imageNames.get(i))));
+			.forEach(i -> itemUpdateRequest.getItemImageDtos().add(ItemImageDto.of(imageNames.get(i))));
 
-		ItemResponse itemResponse = itemService.updateItem2(itemRegisterRequest);
+		ItemResponse itemResponse = itemService.updateItem(itemUpdateRequest);
 		model.addAttribute("item", itemResponse);
 
-		return "redirect:/item/" + itemRegisterRequest.getId();
+		return "redirect:/item/" + itemUpdateRequest.getId();
 	}
 
 	// 상품 삭제
@@ -112,11 +108,6 @@ public class ItemController {
 	public String deleteItem(@PathVariable("itemId") Long itemId) {
 		itemService.deleteItem(itemId);
 		return "redirect:/seller/item-manage";
-	}
-
-	private UserAccount getCurrentPrincipal(Authentication authentication) {
-		return userAccountService.searchUser(authentication.getName())
-			.orElseThrow(PetkpetkServerException::new);
 	}
 
 }

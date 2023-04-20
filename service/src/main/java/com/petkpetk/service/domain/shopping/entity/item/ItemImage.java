@@ -17,14 +17,12 @@ import javax.persistence.Table;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.petkpetk.service.common.AuditingFields;
-import com.petkpetk.service.config.file.PetkpetkImage;
-import com.petkpetk.service.config.properties.Property;
+import com.petkpetk.service.common.PetkpetkImage;
 import com.petkpetk.service.domain.user.dto.security.UserAccountPrincipal;
 
 import lombok.Getter;
