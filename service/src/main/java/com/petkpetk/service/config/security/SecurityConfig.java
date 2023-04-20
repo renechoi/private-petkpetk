@@ -30,16 +30,18 @@ public class SecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
 		return http.authorizeHttpRequests(
-				auth -> auth.requestMatchers(PathRequest.toStaticResources().atCommonLocations())
-					.permitAll()
-					.mvcMatchers("/", "/user/**", "/error/**", "/login", "/seller/sign-up", "/seller/**", "/admin/**",
-						"/test/**", "item/**").permitAll()
-					.mvcMatchers("/api/**", "/explorer").permitAll()
+		auth -> auth.requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+			.permitAll()
+			.mvcMatchers("/", "/user/**", "/error/**", "/login", "/seller/sign-up", "/seller/**", "/admin/**",
+				"/test/**", "item/**").permitAll()
+			.mvcMatchers("/api/**", "/explorer").permitAll()
 
-					.anyRequest()
-					.authenticated())
+			.anyRequest()
+			.authenticated())
 
 			.csrf(csrf -> csrf.ignoringAntMatchers("/api/**"))
+
+			.rememberMe().alwaysRemember(true).and()
 
 			.formLogin(formLogin -> formLogin.loginPage("/login")
 				.loginProcessingUrl("/login/process")
@@ -52,13 +54,14 @@ public class SecurityConfig {
 			.oauth2Login(oauth2 -> oauth2.clientRegistrationRepository(oAuth2Config.clientRegistrationRepository())
 				.authorizedClientService(oAuth2Config.oAuth2AuthorizedClientService())
 				.userInfoEndpoint(
-					user -> user.oidcUserService(oidcUserAccountService)
+				user -> user.oidcUserService(oidcUserAccountService)
 						.userService(OAuth2UserAccountService)
 				)
 			)
 
 			.logout(
-				logout -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/user/logout")).logoutSuccessUrl("/"))
+		logout -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/user/logout")).logoutSuccessUrl("/"))
+
 
 			.exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint()).and()
 

@@ -69,7 +69,10 @@ public class OAuth2UserAccountService implements OAuth2UserService<OAuth2UserReq
 			new Address(),
 			properties.get("profile_image").toString(),
 			OAuth2ProviderInfo.KAKAO,
-			Set.of(RoleType.USER)
+			Set.of(RoleType.USER),
+			null,
+			null,
+			null
 		);
 
 		userAccountService.saveSocialUser(userAccountDto);
@@ -89,7 +92,10 @@ public class OAuth2UserAccountService implements OAuth2UserService<OAuth2UserReq
 			new Address(),
 			attributes.get("profile_image").toString(),
 			OAuth2ProviderInfo.NAVER,
-			Set.of(RoleType.USER)
+			Set.of(RoleType.USER),
+			null,
+			null,
+			null
 		);
 
 		userAccountService.saveSocialUser(userAccountDto);

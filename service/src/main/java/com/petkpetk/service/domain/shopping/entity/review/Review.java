@@ -32,12 +32,12 @@ public class Review extends AuditingFields {
 	@Column(name = "review_id")
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name ="item_id")
 	private Item item;
 
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_account_id")
 	private UserAccount userAccount;
 
@@ -56,12 +56,12 @@ public class Review extends AuditingFields {
 
 	}
 
-	public static Review of(Item item, UserAccount userAccount, String content, Long like) {
-		return new Review(item, userAccount, content, like);
+	public static Review of(Item item, UserAccount userAccount, String content, Long likes) {
+		return new Review(item, userAccount, content, likes);
 	}
 
 	// public void updateReview(ReviewResponse reviewResponse) {
-	//    this.content = reviewResponse.getContent();
+	// 	this.content = reviewResponse.getContent();
 	// }
 
 }

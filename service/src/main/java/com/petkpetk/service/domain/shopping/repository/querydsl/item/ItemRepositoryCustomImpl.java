@@ -56,7 +56,7 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
 			dateTime = dateTime.minusMonths(6);
 		}
 
-		return QItem.item.registeredAt.after(dateTime);
+		return QItem.item.createdAt.after(dateTime);
 	}
 
 	private BooleanExpression searchByLike(String searchBy, String searchQuery) {
@@ -123,6 +123,7 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
 					item.itemName,
 					item.itemDetail,
 					item.itemStatus,
+					item.userAccount.businessName,
 					itemImage.imageUrl,
 					item.price
 				)
@@ -164,7 +165,7 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
 					itemImage.imageUrl,
 					item.price,
 					item.createdBy,
-					item.registeredAt
+					item.createdAt
 				)
 			)
 			.from(itemImg)

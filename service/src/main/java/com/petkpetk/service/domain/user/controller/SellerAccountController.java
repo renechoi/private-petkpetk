@@ -26,17 +26,12 @@ public class SellerAccountController {
 	@GetMapping("/sign-up")
 	public String signUp(Model model) {
 		model.addAttribute("sellerAccount", new SellerAccountRequest());
-		return "seller/sign-up";
+		return "user/seller/sign-up";
 	}
 
 	@PostMapping("/sign-up")
 	public String signUp(SellerAccountRequest sellerAccountRequest) {
 		sellerAccountService.save(sellerAccountRequest.toDto());
-		return "/login";
-	}
-
-	@GetMapping("/login")
-	public String login() {
 		return "/login";
 	}
 
@@ -46,7 +41,7 @@ public class SellerAccountController {
 			.orElseThrow(UserNotFoundException::new);
 		SellerAccountResponse sellerAccountResponse = SellerAccountResponse.from(sellerAccountDto);
 		model.addAttribute("sellerAccount", sellerAccountResponse);
-		return "seller/my-page";
+		return "/my-page";
 	}
 
 	@PostMapping("/my-page/update")

@@ -66,6 +66,7 @@ public class SellerAccount extends AuditingFields implements Serializable {
 	@Size(max = 512)
 	private String profileImage;
 
+	@Column(name = "oauth2_provider_info")
 	@Enumerated(EnumType.STRING)
 	private OAuth2ProviderInfo OAuth2ProviderInfo;
 
