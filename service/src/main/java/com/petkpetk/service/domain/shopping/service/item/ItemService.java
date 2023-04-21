@@ -53,13 +53,7 @@ public class ItemService {
 	}
 
 	public void registerItem(ItemDto itemDto) {
-		// List<ItemImage> images = convertToImages(itemDto.getRawImages());
-		// List<ItemImage> images = RawImageConverter.toPetkpetkImages(itemDto.getRawImages());
-
-		ImageConverter<ItemImage> itemImageConverter = new ImageConverter<>(ItemImage::from);
-		List<ItemImage> images = itemImageConverter.convertToImages(itemDto.getRawImages());
-
-
+		List<ItemImage> images = ImageConverter.of(ItemImage::from).convertToImages(itemDto.getRawImages());
 
 		// 영속화 
 		itemRepository.save(itemDto.toEntity(images));

@@ -64,9 +64,12 @@ public class ItemImage extends AuditingFields implements PetkpetkImage {
 		this.imageUrl = createImageUrl();
 	}
 
-	private String createImageUrl() {
-		return "/images/item/" + uniqueName;
+	public void mapWith(Item item) {
+		if (this.item == null) {
+			this.item = item;
+		}
 	}
+
 
 	public static ItemImage from(MultipartFile rawImage) {
 		return new ItemImage(
@@ -75,11 +78,10 @@ public class ItemImage extends AuditingFields implements PetkpetkImage {
 		);
 	}
 
-	public void mapWith(Item item) {
-		if (this.item == null) {
-			this.item = item;
-		}
+	private String createImageUrl() {
+		return "/images/item/" + uniqueName;
 	}
+
 
 	private static String createUniqueName(MultipartFile rawImage) {
 		return UUID.randomUUID() + extractExtension(rawImage);

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Form</title>
+</head>
+<body>
+<h1>Upload Form</h1>
+<form th:object="${myForm}" th:action="@{/}" method="post" enctype="multipart/form-data">
+    <input type="file" th:field="*{multipartFile}">
+    <br>
+    <input type="submit" value="Upload">
+</form>
+</body>
+</html>

@@ -36,11 +36,10 @@ public class OidcUserAccountService implements OAuth2UserService<OidcUserRequest
 			"undefined",
 			oidcUser.getAttributes().get("name").toString(),
 			"undefined",
+			ProfileImage.of(oidcUser.getAttributes().get("picture").toString()),
 			new Address(),
-			oidcUser.getAttributes().get("picture").toString(),
 			OAuth2ProviderInfo.GOOGLE,
 			Set.of(RoleType.USER),
-			ProfileImage.of(oidcUser.getAttributes().get("picture").toString()),
 			null,
 			null,
 			null

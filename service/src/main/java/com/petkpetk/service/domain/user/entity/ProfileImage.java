@@ -1,5 +1,8 @@
 package com.petkpetk.service.domain.user.entity;
 
+import java.util.Objects;
+import java.util.UUID;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -7,15 +10,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.petkpetk.service.common.PetkpetkImage;
-import com.petkpetk.service.domain.shopping.entity.item.Item;
+import com.petkpetk.service.domain.shopping.entity.item.ItemImage;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -54,6 +56,12 @@ public class ProfileImage implements PetkpetkImage {
 		this.imageUrl = imageUrl;
 	}
 
+	public ProfileImage(String originalName, String uniqueName) {
+		this.originalName = originalName;
+		this.uniqueName = uniqueName;
+		this.imageUrl = createImageUrl();
+	}
+
 	public static ProfileImage of(String imageUrl) {
 		return new ProfileImage(imageUrl);
 	}
@@ -64,4 +72,39 @@ public class ProfileImage implements PetkpetkImage {
 		}
 	}
 
+
+	public static ProfileImage from(MultipartFile rawImage) {
+		return new ProfileImage(
+			rawImage.getOriginalFilename(),
+			createUniqueName(rawImage)
+		);
+	}
+
+	private String createImageUrl() {
+		return "/images/item/" + uniqueName;
+	}
+
+
+	private static String createUniqueName(MultipartFile rawImage) {
+		return UUID.randomUUID() + extractExtension(rawImage);
+	}
+
+	private static String extractExtension(MultipartFile rawImage) {
+		return rawImage.getOriginalFilename().substring(rawImage.getOriginalFilename().lastIndexOf("."));
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (!(o instanceof ProfileImage))
+			return false;
+		ProfileImage that = (ProfileImage)o;
+		return uniqueName.equals(that.uniqueName);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(uniqueName);
+	}
 }

@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.petkpetk.service.common.PetkpetkImage;
+import com.petkpetk.service.config.exception.PetkpetkServerException;
 
 /**
  * Multipart 이미지 파일을 ItemImage, ProfileImage 등 PetkpetkImage를 구현한 Image 객체로 생성하는 Converter.
@@ -15,12 +16,15 @@ import com.petkpetk.service.common.PetkpetkImage;
  * ImageConverter<PetkpetkImage> itemImageConverter = new ImageConverter<>(ItemImage::from);
  * List<PetkpetkImage> convertedImages = itemImageConverter.convertToImages(rawImages);
  *
- * ImageConverter<ItemImage> itemImageConverter = new ImageConverter<>(ItemImage::new);
- * List<ItemImage> convertedImages = itemImageConverter.convertToImages(rawImages);
- *
  * ImageConverter<ProfileImage> profileImageConverter = new ImageConverter<>(ProfileImage::new);
  * List<ProfileImage> convertedImages = profileImageConverter.convertToImages(rawImages);
+ *
+ * 팩토리 패턴 방식
+ * List<ItemImage> images = ImageConverter.of(ItemImage::from).convertToImages(itemDto.getRawImages());
+ *
+ * @author Rene
  * @param <T>
+ * @return <T extends PetkpetkImage>
  */
 
 public class ImageConverter<T extends PetkpetkImage> {
@@ -31,10 +35,24 @@ public class ImageConverter<T extends PetkpetkImage> {
         this.imageConstructor = imageConstructor;
     }
 
+    public static <T extends PetkpetkImage> ImageConverter<T> of(Function<MultipartFile, T> imageConstructor) {
+        return new ImageConverter<>(imageConstructor);
+    }
+
     public List<T> convertToImages(List<MultipartFile> rawImages) {
         return rawImages.stream()
-                .filter(image -> !image.isEmpty())
-                .map(imageConstructor)
-                .collect(Collectors.toList());
+            .filter(image -> !image.isEmpty())
+            .map(imageConstructor)
+            .collect(Collectors.toList());
     }
+
+    public T convertToImage(MultipartFile rawImage) {
+        if (rawImage.isEmpty()) {
+            throw new PetkpetkServerException();
+        }
+        return imageConstructor.apply(rawImage);
+    }
+
+
+
 }

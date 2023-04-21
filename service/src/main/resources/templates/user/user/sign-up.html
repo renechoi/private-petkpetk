@@ -13,7 +13,7 @@
 <div layout:fragment="content">
 
 
-    <form id="JoinForm" th:action="@{/user/sign-up}" role="form" method="post" th:object="${userAccount}">
+    <form id="JoinForm" th:action="@{/user/sign-up}" role="form" method="post" enctype="multipart/form-data" th:object="${userAccount}">
 
         <div class="container">
             <div id="img">
@@ -32,17 +32,6 @@
             <input th:field="*{nickname}" name="nickName" id="nickName" type="text" placeholder="Type your nickname" autocomplete="off" maxlength="8">
             <input id="findNickName" type="button" value="중복 검사">
 
-<!--            <div class="title">프로필 사진<span>Profile image</span></div>-->
-<!--            <div class="file_box">-->
-<!--                <div>-->
-<!--                    <label for="file" id="findImg">파일찾기</label>-->
-<!--                    <input type="file" id="file" onchange="uploadProfileImage()">-->
-<!--                </div>-->
-<!--                <div class="profileImg">-->
-<!--                    <img id="sign-upProfileImg" class="sign-upProfileImg" src="" style="display: none">-->
-<!--                </div>-->
-<!--            </div>-->
-
 
             <div class="title">프로필 사진<span>Profile image</span></div>
             <div class="file_box">
@@ -51,7 +40,7 @@
                     <input th:field="*{profileImage}" type="file" id="file">
                 </div>
                 <div class="profileImg">
-                    <img id="sign-upProfileImg" class="sign-upProfileImg" src="" style="display: none">
+                    <img id="signupProfileImg" class="signupProfileImg" src="" style="display: none">
                 </div>
             </div>
 
@@ -77,6 +66,11 @@
 
             <div class="title">참고항목</div>
             <input th:field="*{address.addressEtc}" type="text" id="addrEtc" placeholder="참고항목" name="addretc"  >
+
+            <input type="hidden" th:value="${T(com.petkpetk.service.common.RoleType).USER}" name="roles">
+
+
+
 
             <br>
             <input type="submit" value="가입하기">
@@ -157,8 +151,8 @@
 <!--                    .then(response => response.json())-->
 <!--                    .then(data => {-->
 <!--                        var imageUrl = data.data.link;-->
-<!--                        document.getElementById('sign-upProfileImg').src = imageUrl;-->
-<!--                        document.getElementById('sign-upProfileImg').style.display = 'block';-->
+<!--                        document.getElementById('signupProfileImg').src = imageUrl;-->
+<!--                        document.getElementById('signupProfileImg').style.display = 'block';-->
 <!--                        document.getElementById('profileImage').value = imageUrl;-->
 <!--                    })-->
 <!--                    .catch(error => {-->

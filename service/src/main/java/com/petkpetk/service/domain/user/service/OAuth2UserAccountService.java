@@ -18,6 +18,7 @@ import com.petkpetk.service.common.RoleType;
 import com.petkpetk.service.config.security.oauth2.OAuth2ProviderInfo;
 import com.petkpetk.service.config.security.oauth2.OAuth2UserAccount;
 import com.petkpetk.service.domain.user.dto.UserAccountDto;
+import com.petkpetk.service.domain.user.entity.ProfileImage;
 import com.petkpetk.service.domain.user.entity.embedded.Address;
 
 import lombok.extern.slf4j.Slf4j;
@@ -55,14 +56,14 @@ public class OAuth2UserAccountService implements OAuth2UserService<OAuth2UserReq
 		Map<String, Object> properties = oAuth2User.getAttribute("properties");
 		Map<String, Object> kakaoAccount = oAuth2User.getAttribute("kakao_account");
 
-		UserAccountDto userAccountDto = UserAccountDto.of(
+		UserAccountDto userSignupRequest = UserAccountDto.of(
 			null,
 			kakaoAccount.get("email").toString(),
 			"undefined",
 			properties.get("nickname").toString(),
 			properties.get("nickname").toString(),
+			ProfileImage.of(properties.get("profile_image").toString()),
 			new Address(),
-			properties.get("profile_image").toString(),
 			OAuth2ProviderInfo.KAKAO,
 			Set.of(RoleType.USER),
 			null,
@@ -70,7 +71,7 @@ public class OAuth2UserAccountService implements OAuth2UserService<OAuth2UserReq
 			null
 		);
 
-		userAccountService.saveSocialUser(userAccountDto);
+		userAccountService.saveSocialUser(userSignupRequest);
 
 		return new DefaultOAuth2User(oAuth2User.getAuthorities(), oAuth2User.getAttributes(), "id");
 	};
@@ -84,8 +85,8 @@ public class OAuth2UserAccountService implements OAuth2UserService<OAuth2UserReq
 			"undefined",
 			attributes.get("name").toString(),
 			attributes.get("nickname").toString(),
+			ProfileImage.of(attributes.get("profile_image").toString()),
 			new Address(),
-			attributes.get("profile_image").toString(),
 			OAuth2ProviderInfo.NAVER,
 			Set.of(RoleType.USER),
 			null,

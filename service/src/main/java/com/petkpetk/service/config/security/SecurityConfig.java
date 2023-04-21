@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.petkpetk.service.domain.user.dto.security.UserAccountPrincipal;
@@ -23,7 +24,6 @@ public class SecurityConfig {
 
 	private final OAuth2Config oAuth2Config;
 	private final OAuth2UserAccountService OAuth2UserAccountService;
-
 	private final OidcUserAccountService oidcUserAccountService;
 
 	@Bean
@@ -57,6 +57,7 @@ public class SecurityConfig {
 				)
 			)
 
+
 			.logout(
 				logout -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/user/logout")).logoutSuccessUrl("/"))
 
@@ -71,4 +72,5 @@ public class SecurityConfig {
 			.map(UserAccountPrincipal::from)
 			.orElseThrow(() -> new UsernameNotFoundException("회원을 찾을 수 없습니다"));
 	}
+
 }

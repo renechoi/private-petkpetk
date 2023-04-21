@@ -2,7 +2,6 @@ package com.petkpetk.service.domain.user.entity;
 
 import java.io.Serializable;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -20,7 +19,6 @@ import javax.persistence.Index;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
-import javax.validation.constraints.Size;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,7 +28,7 @@ import com.petkpetk.service.common.AuditingFields;
 import com.petkpetk.service.config.converter.RoleTypeConverter;
 import com.petkpetk.service.common.RoleType;
 import com.petkpetk.service.config.security.oauth2.OAuth2ProviderInfo;
-import com.petkpetk.service.domain.user.dto.UserAccountDto;
+import com.petkpetk.service.domain.user.dto.request.UserUpdateRequest;
 import com.petkpetk.service.domain.user.entity.embedded.Address;
 
 import lombok.Getter;
@@ -62,12 +60,11 @@ public class UserAccount extends AuditingFields implements Serializable {
 
 	private String nickname;
 
+	@OneToOne(mappedBy = "userAccount", cascade = CascadeType.ALL)
+	@ToString.Exclude
+	private ProfileImage profileImage;
 	@Embedded
 	private Address address;
-
-	@Column(length = 512)
-	@Size(max = 512)
-	private String profileImage;
 
 	@Column(name = "oauth2_provider_info")
 	@Enumerated(EnumType.STRING)
@@ -77,9 +74,6 @@ public class UserAccount extends AuditingFields implements Serializable {
 	@Convert(converter = RoleTypeConverter.class)
 	private Set<RoleType> roles = new LinkedHashSet<>();
 
-	@OneToOne(mappedBy = "userAccount", cascade = CascadeType.ALL, orphanRemoval = true)
-	@ToString.Exclude
-	private ProfileImage profile;
 
 	private String phoneNumber;
 
@@ -87,49 +81,55 @@ public class UserAccount extends AuditingFields implements Serializable {
 
 	private String businessNumber;
 
-	public UserAccount(String email, String password, String name, String nickname, Address address,
-		String profileImage, OAuth2ProviderInfo OAuth2ProviderInfo, Set<RoleType> roles) {
+	public UserAccount(String email, String password, String name, String nickname, ProfileImage profileImage, Address address,
+		 OAuth2ProviderInfo OAuth2ProviderInfo, Set<RoleType> roles) {
 		this.email = email;
 		this.password = password;
 		this.name = name;
 		this.nickname = nickname;
-		this.address = address;
 		this.profileImage = profileImage;
+		this.address = address;
 		this.OAuth2ProviderInfo = OAuth2ProviderInfo;
 		this.roles = roles;
 	}
 
-	public UserAccount(String email, String password, String name, String nickname, Address address,
-		String profileImage, OAuth2ProviderInfo OAuth2ProviderInfo, Set<RoleType> roles, ProfileImage profile, String phoneNumber, String businessName, String businessNumber) {
+	public UserAccount(String email, String password, String name, String nickname, ProfileImage profileImage, Address address,
+		OAuth2ProviderInfo OAuth2ProviderInfo, Set<RoleType> roles, String phoneNumber, String businessName, String businessNumber) {
 		this.email = email;
 		this.password = password;
 		this.name = name;
 		this.nickname = nickname;
+		this.profileImage = mapImage(profileImage);
 		this.address = address;
-		this.profileImage = profileImage;
 		this.OAuth2ProviderInfo = OAuth2ProviderInfo;
 		this.roles = roles;
-		this.profile =addImages(profile);
 		this.phoneNumber = phoneNumber;
 		this.businessName = businessName;
 		this.businessNumber = businessNumber;
 	}
 
 	public static UserAccount of(String email, String password, String name, String nickname, Address address,
-		String profileImage, OAuth2ProviderInfo OAuth2ProviderInfo, Set<RoleType> roles) {
-		return new UserAccount(email, password, name, nickname, address, profileImage, OAuth2ProviderInfo, roles);
+		ProfileImage profileImage, OAuth2ProviderInfo OAuth2ProviderInfo, Set<RoleType> roles) {
+		return new UserAccount(email, password, name, nickname,profileImage, address,  OAuth2ProviderInfo, roles);
 	}
 
-	public static UserAccount of(String email, String password, String name, String nickname, Address address,
-		String profileImage, OAuth2ProviderInfo OAuth2ProviderInfo, Set<RoleType> roles, ProfileImage profile, String phoneNumber, String businessName, String businessNumber) {
-		return new UserAccount(email, password, name, nickname, address, profileImage, OAuth2ProviderInfo, roles, profile, phoneNumber, businessName, businessNumber);
+	public static UserAccount of(String email, String password, String name, String nickname,ProfileImage profileImage, Address address,
+		 OAuth2ProviderInfo OAuth2ProviderInfo, Set<RoleType> roles,  String phoneNumber, String businessName, String businessNumber) {
+		return new UserAccount(email, password, name, nickname, profileImage, address, OAuth2ProviderInfo, roles, phoneNumber, businessName, businessNumber);
 	}
 
 
-	private ProfileImage addImages(ProfileImage profile) {
+	private ProfileImage mapImage(ProfileImage profile) {
 		profile.mapWith(this);
 		return profile;
 	}
+
+	public void addImage(ProfileImage profileImage){
+		profileImage.mapWith(this);
+		this.profileImage = profileImage;
+	}
+
+
 
 	public UserAccount encodePassword(PasswordEncoder passwordEncoder) {
 		this.password = passwordEncoder.encode(this.password);
@@ -140,14 +140,25 @@ public class UserAccount extends AuditingFields implements Serializable {
 		return passwordEncoder.matches(thatPassword, this.password);
 	}
 
-	public void update(UserAccountDto userAccountDto) {
-		this.email = userAccountDto.getEmail();
-		this.password = userAccountDto.getPassword();
-		this.name = userAccountDto.getName();
-		this.nickname = userAccountDto.getNickname();
-		this.address = userAccountDto.getAddress();
-		this.profileImage = userAccountDto.getProfileImage();
-		this.roles = userAccountDto.getRoles();
+
+	public void update(UserUpdateRequest userUpdateRequest, ProfileImage profileImage) {
+		this.email = userUpdateRequest.getEmail();
+		this.password = userUpdateRequest.getPassword();
+		this.name = userUpdateRequest.getName();
+		this.nickname = userUpdateRequest.getNickname();
+		this.profileImage = mapImage(profileImage);
+		this.address = userUpdateRequest.getAddress();
+		this.roles = userUpdateRequest.getRoles();
+	}
+
+
+	public void update(UserUpdateRequest userUpdateRequest) {
+		this.email = userUpdateRequest.getEmail();
+		this.password = userUpdateRequest.getPassword();
+		this.name = userUpdateRequest.getName();
+		this.nickname = userUpdateRequest.getNickname();
+		this.address = userUpdateRequest.getAddress();
+		this.roles = userUpdateRequest.getRoles();
 	}
 
 	@PrePersist
