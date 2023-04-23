@@ -1,6 +1,5 @@
 package com.petkpetk.service.domain.user.service;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.security.core.Authentication;
@@ -12,10 +11,10 @@ import org.springframework.web.multipart.MultipartFile;
 import com.petkpetk.service.config.converter.ImageConverter;
 import com.petkpetk.service.config.exception.PetkpetkServerException;
 import com.petkpetk.service.config.file.ImageLocalRepository;
-import com.petkpetk.service.domain.shopping.entity.item.ItemImage;
 import com.petkpetk.service.domain.user.dto.UserAccountDto;
 import com.petkpetk.service.domain.user.dto.request.UserSignupRequest;
 import com.petkpetk.service.domain.user.dto.request.UserUpdateRequest;
+import com.petkpetk.service.domain.user.dto.security.OAuth2UserAccountPrincipal;
 import com.petkpetk.service.domain.user.dto.security.UserAccountPrincipal;
 import com.petkpetk.service.domain.user.entity.ProfileImage;
 import com.petkpetk.service.domain.user.entity.UserAccount;
@@ -41,7 +40,8 @@ public class UserAccountService {
 			throw new UserDuplicateException();
 		}
 
-		ProfileImage profileImage = ImageConverter.of(ProfileImage::from).convertToImage(userSignupRequest.getProfileImage());
+		ProfileImage profileImage = ImageConverter.of(ProfileImage::from)
+			.convertToImage(userSignupRequest.getProfileImage());
 
 		UserAccount userAccount = userSignupRequest.toEntity(profileImage);
 		userAccount.encodePassword(passwordEncoder);
@@ -50,21 +50,22 @@ public class UserAccountService {
 		imageLocalRepository.save(profileImage, userSignupRequest.getProfileImage());
 	}
 
-	public void saveSocialUser(UserAccountDto userAccountDto) {
-		if (isDuplicate(userAccountDto.getEmail())) {
+	public void saveSocialUser(OAuth2UserAccountPrincipal oAuth2UserAccountPrincipal) {
+		if (isDuplicate(oAuth2UserAccountPrincipal.getEmail())) {
 			return;
 		}
 
-		userAccountRepository.save(userAccountDto.toEntity());
+		userAccountRepository.save(oAuth2UserAccountPrincipal.toEntity());
 	}
 
 	public UserUpdateRequest getUserUpdateRequestView(UserAccountPrincipal userAccountPrincipal) {
 		UserAccount userAccount = searchUser(userAccountPrincipal);
-		MultipartFile profileRawImage = imageLocalRepository.findByPetkpetkImage(userAccount.getProfileImage());
+
+		MultipartFile profileRawImage = userAccountPrincipal instanceof OAuth2UserAccountPrincipal ? null :
+			imageLocalRepository.findByPetkpetkImage(userAccount.getProfileImage());
 
 		return UserUpdateRequest.from(userAccount, profileRawImage);
 	}
-
 
 	/**
 	 * 이미지가 바뀌는 경우와 바뀌지 않는 경우를 나누어서 생각한다.
@@ -83,20 +84,20 @@ public class UserAccountService {
 			return;
 		}
 
-		ProfileImage profileImage = ImageConverter.of(ProfileImage::from).convertToImage(userUpdateRequest.getProfileImage());
+		ProfileImage profileImage = ImageConverter.of(ProfileImage::from)
+			.convertToImage(userUpdateRequest.getProfileImage());
 		userAccount.update(userUpdateRequest, profileImage);
-		profileImageRepository.delete(previousImage);
 
-		Optional.of(previousImage)
+		Optional.ofNullable(previousImage).ifPresent(profileImageRepository::delete);
+
+		Optional.ofNullable(previousImage)
 			.filter(image -> !image.equals(profileImage))
 			.map(ProfileImage::getUniqueName)
 			.ifPresent(getUniqueName -> {
 				imageLocalRepository.delete(previousImage);
-				imageLocalRepository.save(profileImage,userUpdateRequest.getProfileImage() );
+				imageLocalRepository.save(profileImage, userUpdateRequest.getProfileImage());
 			});
 	}
-
-
 
 	public void delete(UserAccountDto userAccountDto) {
 		UserAccount userAccount = findByEmail(userAccountDto).orElseThrow(UserNotFoundException::new);
@@ -108,23 +109,15 @@ public class UserAccountService {
 		return userAccountRepository.findByEmail(email).map(UserAccountDto::fromEntity);
 	}
 
-	public Optional<UserAccountDto> searchUserDto(UserAccountDto userAccountDto) {
-		return findByEmail(userAccountDto).map(UserAccountDto::fromEntity);
-	}
-
 	public Optional<UserAccount> searchUser(String email) {
 		return userAccountRepository.findByEmail(email);
 	}
-
-	public Optional<UserAccount> searchUser(UserAccountDto userAccountDto) {
-		return findByEmail(userAccountDto);
-	}
-
 
 	public UserAccount getCurrentPrincipal(Authentication authentication) {
 		return searchUser(authentication.getName())
 			.orElseThrow(PetkpetkServerException::new);
 	}
+
 	private boolean isDuplicate(String email) {
 		return userAccountRepository.findByEmail(email).isPresent();
 	}
@@ -138,7 +131,8 @@ public class UserAccountService {
 	}
 
 	public UserAccount searchUser(UserAccountPrincipal userAccountPrincipal) {
-		return userAccountRepository.findByEmail(userAccountPrincipal.getEmail()).orElseThrow(UserNotFoundException::new);
+		return userAccountRepository.findByEmail(userAccountPrincipal.getEmail())
+			.orElseThrow(UserNotFoundException::new);
 	}
 
 }

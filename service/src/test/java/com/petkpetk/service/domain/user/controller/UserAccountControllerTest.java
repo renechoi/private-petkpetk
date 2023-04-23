@@ -20,11 +20,11 @@ package com.petkpetk.service.domain.user.controller;// package com.petkpetk.serv
 // import com.petkpetk.service.config.security.oauth2.provider.NaverOAuth2Provider;
 // import com.petkpetk.service.domain.testconfig.TestSecurityConfig;
 // import com.petkpetk.service.domain.user.repository.UserAccountRepository;
-// import com.petkpetk.service.domain.user.service.OAuth2UserAccountService;
+// import com.petkpetk.service.domain.user.service.SocialUserAccountService;
 // import com.petkpetk.service.domain.user.service.UserAccountService;
 //
 // @ActiveProfiles("test")
-// @Import({TestSecurityConfig.class, GoogleOAuth2Provider.class, KakaoOAuth2Provider.class, NaverOAuth2Provider.class, OAuth2UserAccountService.class})
+// @Import({TestSecurityConfig.class, GoogleOAuth2Provider.class, KakaoOAuth2Provider.class, NaverOAuth2Provider.class, SocialUserAccountService.class})
 // @WebMvcTest(UserAccountController.class)
 // public class UserAccountControllerTest {
 //

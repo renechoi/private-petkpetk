@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.petkpetk.service.common.PetkpetkImage;
@@ -17,48 +17,54 @@ import com.petkpetk.service.common.PetkpetkRawImage;
 import com.petkpetk.service.common.StatusCode;
 import com.petkpetk.service.config.exception.PetkpetkServerException;
 import com.petkpetk.service.config.properties.LocalProperty;
+import com.petkpetk.service.config.properties.ServerProperty;
 import com.petkpetk.service.domain.shopping.exception.ImageUploadFailureException;
 
-@Component
+@Repository
 public class ImageLocalRepository<T extends PetkpetkImage> {
 
 	public void save(T petkpetkImage, MultipartFile rawImage) {
 		try {
-			rawImage.transferTo(new File(petkpetkImage.getImageUrl().replace("/images/item/", getSystemStorage())));
+			rawImage.transferTo(new File(petkpetkImage.getImageUrl().replace(ServerProperty.IMAGE_SERVER_LOCATION.getServerLocation(), getSystemStorage())));
 		} catch (IOException e) {
 			throw new ImageUploadFailureException();
 		}
 	}
-
-
 
 	public void deleteFiles(List<T> itemImages) {
 		itemImages.forEach(this::delete);
 	}
 
 	public void delete(T petkpetkImage) {
-		new File(petkpetkImage.getImageUrl().replace("/images/item/", getSystemStorage())).delete();
+		new File(petkpetkImage.getImageUrl().replace(ServerProperty.IMAGE_SERVER_LOCATION.getServerLocation(), getSystemStorage())).delete();
 	}
-
 
 	public MultipartFile findByPetkpetkImage(T petkpetkImage) {
 		try {
-			Path path = Paths.get(petkpetkImage.getImageUrl().replace( "/images/item/", getSystemStorage()));
+			Path path = Paths.get(petkpetkImage.getImageUrl().replace(ServerProperty.IMAGE_SERVER_LOCATION.getServerLocation(), getSystemStorage()));
 			byte[] content = Files.readAllBytes(path);
 			String contentType = Files.probeContentType(path);
-			return new PetkpetkRawImage(petkpetkImage.getImageUrl(), path.getFileName().toString(), contentType, content);
+			return new PetkpetkRawImage(petkpetkImage.getImageUrl(), path.getFileName().toString(), contentType,
+				content);
 		} catch (IOException e) {
 			throw new PetkpetkServerException(StatusCode.LOCAL_IMAGE_CONVERTING_FAILURE);
 		}
 	}
 
+	private String getSystemStorage() {
+		return LocalProperty.getInstance().getItemLocalStorage();
+	}
 
-
-
-
-
-
-
+	/**
+	 * 아래 메서드들은 deprecated 될 예정이나, test code에서 사용되고 있으므로 추후 test code 리팩토링 후 삭제한다.
+	 * TODO: test code 리팩토링
+	 *
+	 * @param uploadPath
+	 * @param originalFileName
+	 * @param fileData
+	 * @return
+	 * @throws IOException
+	 */
 
 	public String saveFiles(String uploadPath, String originalFileName, byte[] fileData) throws
 		IOException {
@@ -79,17 +85,4 @@ public class ImageLocalRepository<T extends PetkpetkImage> {
 			.ifPresent(File::delete);
 
 	}
-
-	private String getSystemStorage() {
-		return LocalProperty.getInstance().getItemLocalStorage();
-	}
-
-	private String getLocalPath() {
-		String uploadPath = LocalProperty.getInstance().getItemLocalStorage(); // WebMvcConfig에서 설정한 경로
-		return uploadPath.substring(uploadPath.lastIndexOf("/")); // 마지막 / 뒤의 경로 반환
-	}
-
-
 }
-
-

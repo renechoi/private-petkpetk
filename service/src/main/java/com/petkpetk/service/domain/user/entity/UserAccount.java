@@ -129,8 +129,6 @@ public class UserAccount extends AuditingFields implements Serializable {
 		this.profileImage = profileImage;
 	}
 
-
-
 	public UserAccount encodePassword(PasswordEncoder passwordEncoder) {
 		this.password = passwordEncoder.encode(this.password);
 		return this;

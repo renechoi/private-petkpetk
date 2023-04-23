@@ -17,8 +17,6 @@ function removeImage(num) {
 }
 
 
-
-
 var addForm = document.getElementById("addForm");
 var firstImage = document.getElementById("firstImage");
 var addItemName = document.getElementById("addItemName");

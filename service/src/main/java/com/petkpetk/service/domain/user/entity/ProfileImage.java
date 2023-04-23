@@ -17,18 +17,15 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.petkpetk.service.common.PetkpetkImage;
-import com.petkpetk.service.domain.shopping.entity.item.ItemImage;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @Getter
 @Setter
 @ToString
-@NoArgsConstructor
 @AllArgsConstructor
 @Entity
 public class ProfileImage implements PetkpetkImage {
@@ -52,7 +49,12 @@ public class ProfileImage implements PetkpetkImage {
 	@ToString.Exclude
 	private UserAccount userAccount;
 
-	public ProfileImage(String imageUrl) {
+	public ProfileImage() {
+		this.uniqueName = createUniqueName();
+	}
+
+	private ProfileImage(String imageUrl) {
+		this.uniqueName = createUniqueName();
 		this.imageUrl = imageUrl;
 	}
 
@@ -72,7 +74,6 @@ public class ProfileImage implements PetkpetkImage {
 		}
 	}
 
-
 	public static ProfileImage from(MultipartFile rawImage) {
 		return new ProfileImage(
 			rawImage.getOriginalFilename(),
@@ -84,6 +85,9 @@ public class ProfileImage implements PetkpetkImage {
 		return "/images/item/" + uniqueName;
 	}
 
+	private static String createUniqueName() {
+		return UUID.randomUUID().toString();
+	}
 
 	private static String createUniqueName(MultipartFile rawImage) {
 		return UUID.randomUUID() + extractExtension(rawImage);

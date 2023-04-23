@@ -70,7 +70,6 @@ public class ItemImage extends AuditingFields implements PetkpetkImage {
 		}
 	}
 
-
 	public static ItemImage from(MultipartFile rawImage) {
 		return new ItemImage(
 			rawImage.getOriginalFilename(),
@@ -81,7 +80,6 @@ public class ItemImage extends AuditingFields implements PetkpetkImage {
 	private String createImageUrl() {
 		return "/images/item/" + uniqueName;
 	}
-
 
 	private static String createUniqueName(MultipartFile rawImage) {
 		return UUID.randomUUID() + extractExtension(rawImage);

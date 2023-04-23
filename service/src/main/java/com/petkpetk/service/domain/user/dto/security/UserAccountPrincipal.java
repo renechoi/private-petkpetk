@@ -15,6 +15,7 @@ import com.petkpetk.service.config.security.oauth2.OAuth2ProviderInfo;
 import com.petkpetk.service.domain.user.dto.UserAccountDto;
 import com.petkpetk.service.domain.user.entity.ProfileImage;
 import com.petkpetk.service.domain.user.entity.embedded.Address;
+import com.petkpetk.service.domain.user.entity.embedded.AddressClaim;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -35,7 +36,7 @@ public class UserAccountPrincipal extends AuditingFields implements UserDetails,
 	private String nickname;
 
 	private ProfileImage profileImage;
-	private Address address;
+	private AddressClaim address;
 
 	private OAuth2ProviderInfo OAuth2ProviderInfo;
 
@@ -48,7 +49,7 @@ public class UserAccountPrincipal extends AuditingFields implements UserDetails,
 	private String businessNumber;
 
 	public UserAccountPrincipal(Long id, String email, String password, String name, String nickname,
-		ProfileImage profileImage, Address address, OAuth2ProviderInfo OAuth2ProviderInfo,
+		ProfileImage profileImage, AddressClaim address, OAuth2ProviderInfo OAuth2ProviderInfo,
 		Collection<? extends GrantedAuthority> roles, String phoneNumber, String businessName, String businessNumber) {
 		this.id = id;
 		this.email = email;
@@ -65,7 +66,7 @@ public class UserAccountPrincipal extends AuditingFields implements UserDetails,
 	}
 
 	public static UserAccountPrincipal of(Long id, String email, String password, String name, String nickname,
-		ProfileImage profileImage, Address address, OAuth2ProviderInfo OAuth2ProviderInfo, Set<RoleType> roles,
+		ProfileImage profileImage, AddressClaim address, OAuth2ProviderInfo OAuth2ProviderInfo, Set<RoleType> roles,
 		String phoneNumber, String businessName, String businessNumber) {
 		return new UserAccountPrincipal(id, email, password, name, nickname, profileImage, address, OAuth2ProviderInfo,
 			roles.stream()
@@ -76,13 +77,13 @@ public class UserAccountPrincipal extends AuditingFields implements UserDetails,
 
 	public static UserAccountPrincipal from(UserAccountDto dto) {
 		return UserAccountPrincipal.of(dto.getId(), dto.getEmail(), dto.getPassword(), dto.getName(), dto.getNickname(),
-			dto.getProfileImage(), dto.getAddress(), dto.getOAuth2ProviderInfo(), dto.getRoles(), dto.getPhoneNumber(),
+			dto.getProfileImage(), new AddressClaim(dto.getAddress()), dto.getOAuth2ProviderInfo(), dto.getRoles(), dto.getPhoneNumber(),
 			dto.getBusinessName(), dto.getBusinessNumber());
 	}
 
 	// TODO : RoleType 설정 추후 변경
 	public UserAccountDto toDto() {
-		return UserAccountDto.of(id, email, password, name, nickname, profileImage, address, OAuth2ProviderInfo,
+		return UserAccountDto.of(id, email, password, name, nickname, profileImage, address.getAddress(), OAuth2ProviderInfo,
 			roles.stream()
 				.map(grantedAuthority -> RoleType.valueOf(grantedAuthority.getAuthority().substring(5)))
 				.collect(Collectors.toUnmodifiableSet()), phoneNumber, businessName, businessNumber);

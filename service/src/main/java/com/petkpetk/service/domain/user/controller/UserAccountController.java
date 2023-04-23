@@ -4,6 +4,9 @@ import java.net.http.HttpRequest;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,7 +43,13 @@ public class UserAccountController {
 	}
 
 	@GetMapping("/update")
-	public String update(@AuthenticationPrincipal UserAccountPrincipal userAccountPrincipal, Model model) {
+	public String update(Authentication authentication,
+		@AuthenticationPrincipal UserAccountPrincipal userAccountPrincipal, Model model) {
+		if (userAccountPrincipal == null && authentication != null && authentication.getPrincipal() instanceof OAuth2User) {
+			OAuth2User oAuth2User2 = (OAuth2User) authentication.getPrincipal();
+			// userAccountPrincipal = UserAccountPrincipal.from(oAuth2User2);
+		}
+
 		model.addAttribute("userAccount", userAccountService.getUserUpdateRequestView(userAccountPrincipal));
 		return "user/user/update";
 	}
@@ -56,7 +65,6 @@ public class UserAccountController {
 		userAccountService.delete(userAccountPrincipal.toDto());
 		return "redirect:/";
 	}
-
 
 }
 

@@ -43,17 +43,10 @@
                     <input th:field="*{profileImage}" type="file" id="file" onchange="loadImage(event)">
                 </div>
                 <div class="profileImg">
-                    <img id="previousProfileImage" class="previousProfileImage" th:src="@{*{profileImage.getName()}}" alt="기존 프로필 없음">
+                    <img id="previousProfileImage" class="previousProfileImage" th:if="${userAccount.profileImage != null}" th:src="@{*{profileImage.getName()}}" alt="기존 프로필 없음">
                     <img id="signupProfileImg" class="signupProfileImg" src="" style="display: none">
                 </div>
             </div>
-
-
-<!--            <input type="hidden" name="profileImage" th:value="${userAccount.profileImage}">-->
-
-
-
-
 
 
             <div class="title">비밀번호<span>PASSWORD</span></div>
@@ -172,23 +165,3 @@
 </html>
 
 
-
-
-
-<!--<form th:action="@{/update}" method="post" enctype="multipart/form-data" th:object="${userUpdateRequest}">-->
-<!--    <input type="hidden" name="profileImageUploaded" th:if="${userUpdateRequest.profileImage != null}" th:value="${userUpdateRequest.profileImage.originalFilename}" />-->
-<!--    &lt;!&ndash; 프로필 이미지 파일 선택 &ndash;&gt;-->
-<!--    <div class="form-group">-->
-<!--        <label for="profileImage">프로필 이미지</label>-->
-<!--        <input type="file" class="form-control-file" id="profileImage" name="profileImage" accept="image/*" />-->
-<!--    </div>-->
-<!--    &lt;!&ndash; 생략 &ndash;&gt;-->
-<!--</form>-->
-
-
-<!--<form method="post" enctype="multipart/form-data" th:object="${userUpdateRequest}">-->
-<!--    &lt;!&ndash; 기존 MultipartFile 데이터를 hidden 필드로 전송합니다. &ndash;&gt;-->
-<!--    <input type="hidden" name="profileImage" th:if="${userUpdateRequest.profileImage == null}" th:value="${userAccount.profileImage}"/>-->
-<!--    <input type="file" name="profileImage" th:if="${userUpdateRequest.profileImage != null}" th:field="*{profileImage}" />-->
-<!--    <input type="submit" value="Submit" />-->
-<!--</form>-->

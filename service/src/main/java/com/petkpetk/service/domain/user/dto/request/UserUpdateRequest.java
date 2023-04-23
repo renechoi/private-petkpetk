@@ -33,14 +33,11 @@ public class UserUpdateRequest {
 
 	private Long id;
 
-	@Email(message = "이메일 형식으로 입력해주세요")
-	@NotBlank(message = "이메일을 입력해주세요.")
 	private String email;
 
 	@Length(min = 8, max = 16, message = "비밀번호는 8자 이상 16자 이하로 입력해주세요")
 	@NotBlank(message = "비밀번호를 입력해주세요.")
 	private String password;
-	@NotBlank(message = "이름을 입력해주세요.")
 	private String name;
 	@NotBlank(message = "닉네임을 입력해주세요.")
 	private String nickname;
@@ -75,17 +72,4 @@ public class UserUpdateRequest {
 		userAccount.setProfileImage(profileImage);
 		return userAccount;
 	}
-
-	public static UserUpdateRequest fromEntity(UserAccount userAccount) {
-		return EntityAndDtoConverter.convertToDto(userAccount, UserUpdateRequest.class);
-	}
-
-	public static UserUpdateRequest fromEntity(UserAccount userAccount, MultipartFile rawImage) {
-		UserUpdateRequest userUpdateRequest = EntityAndDtoConverter.convertToDto(userAccount, UserUpdateRequest.class);
-		return null;
-	}
-
-
-
-
 }

@@ -8,12 +8,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.petkpetk.service.domain.user.dto.security.UserAccountPrincipal;
-import com.petkpetk.service.domain.user.service.OidcUserAccountService;
-import com.petkpetk.service.domain.user.service.OAuth2UserAccountService;
+import com.petkpetk.service.domain.user.service.SocialUserAccountService;
 import com.petkpetk.service.domain.user.service.UserAccountService;
 
 import lombok.RequiredArgsConstructor;
@@ -23,8 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
 	private final OAuth2Config oAuth2Config;
-	private final OAuth2UserAccountService OAuth2UserAccountService;
-	private final OidcUserAccountService oidcUserAccountService;
+	private final SocialUserAccountService socialUserAccountService;
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -52,11 +49,10 @@ public class SecurityConfig {
 			.oauth2Login(oauth2 -> oauth2.clientRegistrationRepository(oAuth2Config.clientRegistrationRepository())
 				.authorizedClientService(oAuth2Config.oAuth2AuthorizedClientService())
 				.userInfoEndpoint(
-					user -> user.oidcUserService(oidcUserAccountService)
-						.userService(OAuth2UserAccountService)
+					user -> user.oidcUserService(socialUserAccountService)
+						.userService(socialUserAccountService)
 				)
 			)
-
 
 			.logout(
 				logout -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/user/logout")).logoutSuccessUrl("/"))

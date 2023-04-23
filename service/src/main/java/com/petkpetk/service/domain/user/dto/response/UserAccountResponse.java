@@ -39,12 +39,4 @@ public class UserAccountResponse {
 			dto.getProfileImage(), dto.getAddress(), dto.getOAuth2ProviderInfo(), dto.getRoles(), dto.getPhoneNumber(),
 			dto.getBusinessName(), dto.getBusinessNumber());
 	}
-
-	public UserAccountDto toDto() {
-		return UserAccountDto.of(null, this.email, this.password, this.name, this.nickname, 	this.profileImage, this.address,
-		 this.OAuth2ProviderInfo, Set.of(RoleType.USER),this.getPhoneNumber(),
-			this.businessName,
-			this.businessNumber);
-	}
-
 }
