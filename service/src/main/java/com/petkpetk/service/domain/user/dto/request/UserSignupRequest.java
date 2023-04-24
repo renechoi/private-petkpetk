@@ -55,8 +55,6 @@ public class UserSignupRequest {
 
 	private String businessNumber;
 
-
-
 	public UserAccount toEntity() {
 		return EntityAndDtoConverter.convertToEntity(this, UserAccount.class);
 	}

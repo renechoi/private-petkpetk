@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.petkpetk.service.config.security.oauth2.OAuth2ProviderInfo;
-import com.petkpetk.service.config.security.oauth2.OAuth2UserAccount;
+import com.petkpetk.service.config.security.oauth2.SocialAccount;
 import com.petkpetk.service.domain.user.dto.security.OAuth2UserAccountPrincipal;
 
 import lombok.extern.slf4j.Slf4j;
@@ -31,12 +31,12 @@ public class SocialUserAccountService<T extends OAuth2UserRequest, U extends OAu
 	OAuth2UserService<T, OAuth2UserAccountPrincipal> {
 	private UserAccountService userAccountService;
 
-	private final Map<String, OAuth2UserAccount> oAuth2Users;
+	private final Map<String, SocialAccount> socialUsers;
 
 	@Autowired
 	public SocialUserAccountService(UserAccountService userAccountService) {
 		this.userAccountService = userAccountService;
-		oAuth2Users = Map.of(OAuth2ProviderInfo.KAKAO.getProviderId(), KAKAO, OAuth2ProviderInfo.NAVER.getProviderId(),
+		socialUsers = Map.of(OAuth2ProviderInfo.KAKAO.getProviderId(), KAKAO, OAuth2ProviderInfo.NAVER.getProviderId(),
 			NAVER, OAuth2ProviderInfo.GOOGLE.getProviderId(), GOOGLE);
 	}
 
@@ -45,31 +45,31 @@ public class SocialUserAccountService<T extends OAuth2UserRequest, U extends OAu
 	public OAuth2UserAccountPrincipal loadUser(T userRequest) throws OAuth2AuthenticationException {
 		OAuth2UserService<T, U> oAuth2UserService = (OAuth2UserService<T, U>)new DefaultOAuth2UserService();
 
-		OAuth2UserAccount oAuth2UserAccount = oAuth2Users.get(
+		SocialAccount socialAccount = socialUsers.get(
 			userRequest.getClientRegistration().getRegistrationId().toLowerCase());
 
 		if (userRequest instanceof OidcUserRequest) {
 			oAuth2UserService = (OAuth2UserService<T, U>)new OidcUserService();
 		}
 
-		return oAuth2UserAccount.signup(oAuth2UserService.loadUser(userRequest));
+		return socialAccount.signup(oAuth2UserService.loadUser(userRequest));
 	}
 
-	public OAuth2UserAccount KAKAO = (oAuth2User) -> {
+	public SocialAccount KAKAO = (oAuth2User) -> {
 		OAuth2UserAccountPrincipal oAuth2UserAccountPrincipal = OAuth2UserAccountPrincipal.fromOAuth2(
 			getKakaoAttributes(oAuth2User));
 		userAccountService.saveSocialUser(oAuth2UserAccountPrincipal);
 		return oAuth2UserAccountPrincipal;
 	};
 
-	public OAuth2UserAccount NAVER = (oAuth2User) -> {
+	public SocialAccount NAVER = (oAuth2User) -> {
 		OAuth2UserAccountPrincipal oAuth2UserAccountPrincipal = OAuth2UserAccountPrincipal.fromOAuth2(
 			getNaverAttributes(oAuth2User));
 		userAccountService.saveSocialUser(oAuth2UserAccountPrincipal);
 		return oAuth2UserAccountPrincipal;
 	};
 
-	public OAuth2UserAccount GOOGLE = (oidcUser) -> {
+	public SocialAccount GOOGLE = (oidcUser) -> {
 		OAuth2UserAccountPrincipal oAuth2UserAccountPrincipal = OAuth2UserAccountPrincipal.fromOidc(
 			getGoogleAttributes(oidcUser));
 		userAccountService.saveSocialUser(oAuth2UserAccountPrincipal);

@@ -118,7 +118,6 @@ public class UserAccount extends AuditingFields implements Serializable {
 		return new UserAccount(email, password, name, nickname, profileImage, address, OAuth2ProviderInfo, roles, phoneNumber, businessName, businessNumber);
 	}
 
-
 	private ProfileImage mapImage(ProfileImage profile) {
 		profile.mapWith(this);
 		return profile;

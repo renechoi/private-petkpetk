@@ -1,7 +1,11 @@
 package com.petkpetk.service.domain.shopping.service.item;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -63,7 +67,6 @@ public class ItemService {
 			.forEach(image -> imageLocalRepository.save(images.get(image), itemDto.getRawImages().get(image)));
 	}
 
-
 	public ItemResponse updateItem(ItemRegisterRequest itemUpdateRequest) {
 
 		Item item = itemRepository.findById(itemUpdateRequest.getId()).orElseThrow(ItemNotFoundException::new);
@@ -72,26 +75,29 @@ public class ItemService {
 
 		List<ItemImage> notModifiedImages = itemUpdateRequest.getItemImageDtos()
 			.stream()
-			.map(ItemImageDto::getOriginalName)
-			.map(itemImageRepository::findByOriginalName).collect(Collectors.toList());
+			.map(ItemImageDto::getUniqueName)
+			.map(itemImageRepository::findByUniqueName)
+			.collect(Collectors.toList());
 
 		List<ItemImage> newlyAddedImages = itemUpdateRequest.getImages().stream()
-			.map(ItemImage::from).collect(Collectors.toList());
+			.map(image -> itemUpdateRequest.getImages().indexOf(image) == 0 && !image.isEmpty()
+				? ItemImage.asRepresentative(image)
+				: ItemImage.from(image))
+			.collect(Collectors.toList());
 
 		List<ItemImage> allRequestedImages = Stream.concat(notModifiedImages.stream(), newlyAddedImages.stream())
 			.collect(Collectors.toList());
 
-		// todo : itemImages 중에서 allRequestedImages 없으면 삭제 대상.
+		// todo : itemImages(DB) 중에서 allRequestedImages 없으면 삭제 대상.
 		List<ItemImage> imagesToDelete = itemImages.stream()
 			.filter(itemImage -> !allRequestedImages.contains(itemImage))
 			.collect(Collectors.toList());
 
-
 		imageLocalRepository.deleteFiles(imagesToDelete);
 
 		IntStream.range(0, newlyAddedImages.size())
-			.forEach(image -> imageLocalRepository.save(newlyAddedImages.get(image), itemUpdateRequest.getImages().get(image)));
-
+			.forEach(image -> imageLocalRepository.save(newlyAddedImages.get(image),
+				itemUpdateRequest.getImages().get(image)));
 
 		// todo: db에서 가져온 itemImages 중에 notModifiedImages에 해당하는 itemImage가 없으면 삭제 대상
 		itemImages.removeIf(itemImage -> !notModifiedImages.contains(itemImage));
@@ -100,12 +106,8 @@ public class ItemService {
 		itemImages.addAll(newlyAddedImages);
 		item.mapImages(itemImages);
 
-
 		return ItemResponse.from(item);
 	}
-
-
-
 
 	public void deleteItem(Long itemId) {
 		Item item = findById(itemId);
@@ -124,7 +126,5 @@ public class ItemService {
 	private List<ItemImage> findByItemIdOrderByIdAsc(Long id) {
 		return itemImageRepository.findByItemIdOrderByIdAsc(id);
 	}
-
-
 
 }
