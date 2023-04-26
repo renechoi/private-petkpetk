@@ -34,19 +34,17 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     compileOnly 'org.projectlombok:lombok'
 
-
-    // security
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
+    // util
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.modelmapper:modelmapper:2.4.4'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
 
 
     //security
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
-
-
-    // validation
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
 
     // thymeleaf
@@ -70,6 +68,10 @@ dependencies {
     implementation 'org.springframework.data:spring-data-rest-hal-explorer'
 
 
+    // redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+
     //test
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
@@ -83,7 +85,6 @@ tasks.named('test') {
 }
 
 
-
 //querydsl q파일 생성 세팅
 def querydslDir = "$buildDir/generated/querydsl"
 
@@ -94,7 +95,7 @@ querydsl {
 sourceSets {
     main.java.srcDir querydslDir
 }
-compileQuerydsl{
+compileQuerydsl {
     options.annotationProcessorPath = configurations.querydsl
 }
 configurations {

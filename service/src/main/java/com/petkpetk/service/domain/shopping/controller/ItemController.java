@@ -1,5 +1,6 @@
 package com.petkpetk.service.domain.shopping.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -20,7 +21,11 @@ import com.petkpetk.service.domain.shopping.dto.item.ItemDto;
 import com.petkpetk.service.domain.shopping.dto.item.ItemImageDto;
 import com.petkpetk.service.domain.shopping.dto.item.request.ItemRegisterRequest;
 import com.petkpetk.service.domain.shopping.dto.item.response.ItemResponse;
+import com.petkpetk.service.domain.shopping.dto.review.response.ReviewResponse;
 import com.petkpetk.service.domain.shopping.service.item.ItemService;
+import com.petkpetk.service.domain.shopping.service.review.ReviewService;
+import com.petkpetk.service.domain.shopping.service.review.likes.LikesService;
+import com.petkpetk.service.domain.user.entity.UserAccount;
 import com.petkpetk.service.domain.user.service.UserAccountService;
 
 import lombok.RequiredArgsConstructor;
@@ -34,6 +39,8 @@ public class ItemController {
 
 	private final ItemService itemService;
 	private final UserAccountService userAccountService;
+	private final LikesService likesService;
+	private final ReviewService reviewService;
 
 	@GetMapping("/my-page")
 	public String myPageView() {
@@ -57,9 +64,22 @@ public class ItemController {
 
 	// 해당 상품 상세 페이지
 	@GetMapping("/{itemId}")
-	public String itemDetail(Model model, @PathVariable("itemId") Long itemId) {
+	public String itemDetail(Model model, @PathVariable("itemId") Long itemId, Authentication authentication) {
 		ItemResponse itemResponse = itemService.getItemDetail(itemId);
+
+		String email = "";
+		if (authentication != null && authentication.isAuthenticated()) {
+			email = authentication.getName();
+			model.addAttribute("userEmail", email);
+			UserAccount userAccount = userAccountService.searchUser(email).get();
+			HashMap<String, String> hashMap;
+			hashMap = likesService.findHistoryLikeByUser(userAccount.getId());
+			model.addAttribute("reviewHashMap",hashMap);
+		}
+		List<ReviewResponse> reviewList = reviewService.getReviewList(itemId);
+
 		model.addAttribute("item", itemResponse);
+		model.addAttribute("reviewList", reviewList);
 		return "item/itemDetail";
 
 	}
@@ -80,7 +100,7 @@ public class ItemController {
 		@RequestParam("images") List<MultipartFile> rawImages,
 		@RequestParam("imageNames") List<String> imageNames,
 		@RequestParam("uniqueImageNames") List<String> uniqueImageNames
-		) {
+	) {
 
 		if (bindingResult.hasErrors()) {
 			log.info("errors = {}", bindingResult);
