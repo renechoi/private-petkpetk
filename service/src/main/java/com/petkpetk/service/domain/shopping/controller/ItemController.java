@@ -21,6 +21,7 @@ import com.petkpetk.service.domain.shopping.dto.item.ItemDto;
 import com.petkpetk.service.domain.shopping.dto.item.ItemImageDto;
 import com.petkpetk.service.domain.shopping.dto.item.request.ItemRegisterRequest;
 import com.petkpetk.service.domain.shopping.dto.item.response.ItemResponse;
+import com.petkpetk.service.domain.shopping.dto.review.request.ReviewRegisterRequest;
 import com.petkpetk.service.domain.shopping.dto.review.response.ReviewResponse;
 import com.petkpetk.service.domain.shopping.service.item.ItemService;
 import com.petkpetk.service.domain.shopping.service.review.ReviewService;
@@ -66,6 +67,9 @@ public class ItemController {
 	@GetMapping("/{itemId}")
 	public String itemDetail(Model model, @PathVariable("itemId") Long itemId, Authentication authentication) {
 		ItemResponse itemResponse = itemService.getItemDetail(itemId);
+		UserAccount itemUser = userAccountService.searchUser(itemResponse.getUserAccount().getEmail()).get();
+
+		System.out.println("itemUser = " + itemUser);
 
 		String email = "";
 		if (authentication != null && authentication.isAuthenticated()) {
@@ -79,7 +83,9 @@ public class ItemController {
 		List<ReviewResponse> reviewList = reviewService.getReviewList(itemId);
 
 		model.addAttribute("item", itemResponse);
+		model.addAttribute("itemUser", itemUser);
 		model.addAttribute("reviewList", reviewList);
+		model.addAttribute("reviewDtos", new ReviewRegisterRequest());
 		return "item/itemDetail";
 
 	}
