@@ -10,7 +10,4 @@ import com.petkpetk.service.domain.community.entity.ArticleImage;
 public interface ArticleImageRepository extends JpaRepository<ArticleImage, Long>,
 	QuerydslPredicateExecutor<ArticleImage> {
 	List<ArticleImage> findByArticleIdOrderByIdAsc(Long itemId);
-	List<ArticleImage> findByOriginalName(String originalName);
-	ArticleImage findByUniqueName(String originalName);
-
 }

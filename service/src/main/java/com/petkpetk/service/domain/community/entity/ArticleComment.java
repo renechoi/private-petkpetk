@@ -1,10 +1,6 @@
 package com.petkpetk.service.domain.community.entity;
 
-import java.time.LocalDate;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -17,7 +13,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-import javax.persistence.Table;
+
+import org.hibernate.annotations.Where;
 
 import com.petkpetk.service.common.AuditingFields;
 import com.petkpetk.service.domain.user.entity.UserAccount;
@@ -31,6 +28,7 @@ import lombok.ToString;
 @Setter
 @ToString(callSuper = true)
 @NoArgsConstructor
+@Where(clause = "deleted_yn='N'")
 @Entity
 public class ArticleComment extends AuditingFields {
 
@@ -45,7 +43,6 @@ public class ArticleComment extends AuditingFields {
 	@JoinColumn(name = "user_account_id")
 	@ManyToOne
 	private UserAccount userAccount;
-
 
 	private String content;
 	private Long parentCommentId;

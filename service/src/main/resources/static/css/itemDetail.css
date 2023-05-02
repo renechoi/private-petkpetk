@@ -129,13 +129,13 @@ input.removeImage:hover {
 #SoldOut {
     cursor: default;
     text-align: center;
-    width: 50px;
-    height: 20px;
+    width: 65px;
+    height: 30px;
     background: #ff415a;
     border-radius: 5px;
     color: white;
-    font-size: 13px;
-    line-height: 20px;
+    font-size: 17px;
+    line-height: 31px;
 }
 
 .statusClass {
@@ -188,7 +188,7 @@ input.removeImage:hover {
 
 .totalWon, .totalText {
     position: relative;
-    top: 3px;
+    top: 3.5px;
     font-size: 21px;
     color: #3A1D1D;
 }
@@ -209,8 +209,8 @@ input.removeImage:hover {
 }
 
 .OriginalCost {
-    font-size: 16px;
-    color: #bdb1b1;
+    font-size: 19px;
+    color: #ab9d9d;
     text-decoration: line-through;
     margin-right: 10px;
     position: relative;
@@ -466,8 +466,9 @@ div#reviewModal {
 
 .reviewModifyBtn {
     display: flex;
-    justify-content: flex-end;
 }
+
+
 
 textarea#reviewModalContent {
     width: 100%;
@@ -636,7 +637,42 @@ th.firstChild {
 td.firstChild {
     border-top-right-radius: 5px;
 }
+.ratingBox {
+    margin-left: 10px;
+}
 
+.star {
+    height: 18px;
+    position: relative;
+    top: 4px;
+}
+.starZone {
+    display: flex;
+    justify-content: space-between;
+}
+
+img#star {
+    height: 35px;
+    top: 0px;
+}
+
+.starBtn {
+    border: none;
+    width: 19.59px;
+    height: 34px;
+    cursor: pointer;
+    background-color: transparent;
+    color: transparent;
+}
+
+
+span#discountRate {
+    font-size: 24px;
+    margin-right: 3px;
+    position: relative;
+    bottom: 1px;
+    color: #ff4b5b;
+}
 
 /*----------------------------------------------------------------------------------*/
 
@@ -714,6 +750,13 @@ td.firstChild {
         top: 1.5px;
         font-size: 18px;
     }
+
+    #SoldOut {
+        width: 50px;
+        height: 22px;
+        font-size: 13px;
+        line-height: 22px;
+    }
 }
 
 @media screen and (max-width: 660px) {
@@ -783,7 +826,12 @@ td.firstChild {
     .itemDetailName {
         font-size: 15px;
     }
-
+    #SoldOut {
+        width: 46px;
+        height: 19px;
+        font-size: 12px;
+        line-height: 19px;
+    }
 
 
     .totalWon, .totalText {

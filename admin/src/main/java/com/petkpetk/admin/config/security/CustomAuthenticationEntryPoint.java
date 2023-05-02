@@ -14,7 +14,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 	public void commence(HttpServletRequest request, HttpServletResponse response,
 		AuthenticationException authException) throws IOException {
 		authException.printStackTrace();
-		// response.sendError(HttpServletResponse.SC_UNAUTHORIZED, request.getAuthType() + "and " + authException.getLocalizedMessage());
 		response.sendRedirect("/error/4xx.html");
 	}
 

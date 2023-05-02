@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>글쓰기 | Be My Pet</title>
+    <title>글쓰기 페이지</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/article-basic.css}">
     <link rel="stylesheet" type="text/css" th:href="@{/css/article.css}">
 </head>
@@ -11,7 +11,7 @@
 <main>
     <div class="container">
         <h2>글쓰기</h2>
-        <form action="#" th:action="@{/community/article/post}" th:object="${article}" method="post"
+        <form action="#" th:action="@{/community/articles/post}" th:object="${article}" method="post"
               enctype="multipart/form-data">
             <div class="form-group">
                 <label for="title">제목</label>
@@ -41,7 +41,7 @@
             </div>
 
             <div class="article-image-upload">
-                <input id="images" type="file" multiple="" style="display: none;">
+                <input id="images" name="rawImages" type="file" multiple="" style="display: none;">
                 <label for="images" class="article-image-upload">
                     <img src="/images/ICON_Camera.png">사진첨부</label>
                 <span class="article-image-upload-description">이미지는 최대 5개 첨부 가능 합니다</span>

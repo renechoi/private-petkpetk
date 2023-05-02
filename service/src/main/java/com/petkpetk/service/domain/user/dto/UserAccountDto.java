@@ -20,7 +20,6 @@ import lombok.NoArgsConstructor;
 public class UserAccountDto {
 
 	private Long id;
-
 	private String email;
 	private String password;
 	private String name;
@@ -38,6 +37,12 @@ public class UserAccountDto {
 
 	public static UserAccountDto from(UserAccountPrincipal userAccountPrincipal) {
 		UserAccountDto userAccountDto = EntityAndDtoConverter.convertToDto(userAccountPrincipal, UserAccountDto.class);
+		userAccountDto.setRoles(Set.of(RoleType.USER));
+		return userAccountDto;
+	}
+
+	public static UserAccountDto from(UserAccount userAccount) {
+		UserAccountDto userAccountDto = EntityAndDtoConverter.convertToDto(userAccount, UserAccountDto.class);
 		userAccountDto.setRoles(Set.of(RoleType.USER));
 		return userAccountDto;
 	}

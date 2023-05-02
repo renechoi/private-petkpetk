@@ -11,17 +11,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.hibernate.annotations.Where;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.petkpetk.service.common.AuditingFields;
 import com.petkpetk.service.common.PetkpetkImage;
-import com.petkpetk.service.domain.user.dto.security.UserAccountPrincipal;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,6 +29,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @NoArgsConstructor
+@Where(clause = "deleted_yn='N'")
 @Entity
 public class ArticleImage extends AuditingFields implements PetkpetkImage {
 
@@ -86,15 +84,6 @@ public class ArticleImage extends AuditingFields implements PetkpetkImage {
 
 	private static String extractExtension(MultipartFile rawImage) {
 		return rawImage.getOriginalFilename().substring(rawImage.getOriginalFilename().lastIndexOf("."));
-	}
-
-	@PrePersist
-	public void anonymousSetup() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		UserAccountPrincipal userAccountPrincipal = (UserAccountPrincipal)authentication.getPrincipal();
-
-		this.createdBy = userAccountPrincipal.getBusinessName();
-		this.modifiedBy = userAccountPrincipal.getBusinessName();
 	}
 
 	@Override

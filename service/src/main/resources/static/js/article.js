@@ -21,19 +21,6 @@ imagesInput.addEventListener('change', function() {
 });
 
 
-//
-//
-// const hashtagInput = document.getElementById('hashtag');
-// hashtagInput.addEventListener('focus', addHashtagSymbol);
-// hashtagInput.addEventListener('keyup', addHashtagSymbol);
-//
-// function addHashtagSymbol() {
-//     if (!hashtagInput.value.startsWith('#')) {
-//         hashtagInput.value = '#' + hashtagInput.value;
-//     }
-// }
-//
-//
 
 
 const hashtagInput = document.getElementById('hashtag');
@@ -48,18 +35,31 @@ function addHashtagSymbol() {
 
 function handleHashtagInput(event) {
     const message = hashtagInput.parentNode.querySelector('.error-message');
-    if (event.keyCode === 32 || !isValidKey(event.key)) {
+    if (isInValidKey(event.key)) {
         if (!message) {
             const newMessage = document.createElement('div');
             newMessage.classList.add('error-message');
-            newMessage.textContent = '해시태그는 컴마로 구분해주세요.';
+            newMessage.textContent = '해시태그에 특수문자는 입력할 수 없습니다.';
             newMessage.style.color = 'red';
             hashtagInput.parentNode.append(newMessage, hashtagInput.nextSibling);
-        }
-        if (event.keyCode === 32) {
-            hashtagInput.value += '#';
+            event.preventDefault();
         }
         event.preventDefault();
+    } else if (event.keyCode === 32 ) {
+            hashtagInput.value += ' #';
+        event.preventDefault();
+    } else if (event.key === '#' && hashtagInput.value.endsWith('#')) {
+        const newMessage = document.createElement('div');
+        newMessage.classList.add('error-message');
+        newMessage.textContent = '해시태그는 중복할 수 없습니다.';
+        newMessage.style.color = 'red';
+        hashtagInput.parentNode.append(newMessage, hashtagInput.nextSibling);
+        event.preventDefault();
+    } else if (event.key === '#' ) {
+        hashtagInput.value += ' #';
+        event.preventDefault();
+
+
     } else {
         if (message) {
             message.remove();
@@ -67,107 +67,8 @@ function handleHashtagInput(event) {
     }
 }
 
-function isValidKey(key) {
-    const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Control', 'Alt', 'Shift', 'CapsLock', 'Tab', 'Enter'];
-    return /^[a-zA-Z0-9]+$/.test(key) || allowedKeys.includes(key);
+function isInValidKey(key) {
+    const notAllowedKeys = ['Delete', 'ArrowUp', 'ArrowDown', 'Control', 'Alt', 'Enter'];
+    return /^[!@$%^&*()_+,.\-=/<>?;':"|}{\[\]\\]+$/.test(key) || notAllowedKeys.includes(key);
 }
 
-
-
-
-
-
-// const hashtagInput = document.getElementById('hashtag');
-// hashtagInput.addEventListener('focus', addHashtagSymbol);
-// hashtagInput.addEventListener('keydown', handleHashtagInput);
-//
-// function addHashtagSymbol() {
-//     if (!hashtagInput.value.startsWith('#')) {
-//         hashtagInput.value = '#' + hashtagInput.value;
-//     }
-// }
-//
-// function handleHashtagInput(event) {
-//     const message = hashtagInput.parentNode.querySelector('.error-message');
-//     if (event.keyCode === 32 || !isValidKey(event.key)) {
-//         if (!message) {
-//             const newMessage = document.createElement('div');
-//             newMessage.classList.add('error-message');
-//             newMessage.textContent = '해시태그는 컴마로 구분해주세요.';
-//             newMessage.style.color = 'red';
-//             hashtagInput.parentNode.append(newMessage, hashtagInput.nextSibling);
-//         }
-//         event.preventDefault();
-//     } else {
-//         if (message) {
-//             message.remove();
-//         }
-//     }
-// }
-//
-// function isValidKey(key) {
-//     const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Control', 'Alt', 'Shift', 'CapsLock', 'Tab', 'Enter'];
-//     return /^[a-zA-Z0-9]+$/.test(key) || allowedKeys.includes(key);
-// }
-
-
-
-
-
-
-//
-
-
-
-
-//
-// const hashtagInput = document.getElementById('hashtag');
-// hashtagInput.addEventListener('focus', addHashtagSymbol);
-// hashtagInput.addEventListener('keyup', handleHashtagInput);
-//
-// function addHashtagSymbol() {
-//     if (!hashtagInput.value.startsWith('#')) {
-//         hashtagInput.value = '#' + hashtagInput.value;
-//     }
-// }
-//
-// function handleHashtagInput(event) {
-//     const message = hashtagInput.parentNode.querySelector('.error-message');
-//     if (event.keyCode === 32) { // Space key
-//         if (!message) {
-//             const newMessage = document.createElement('div');
-//             newMessage.classList.add('error-message');
-//             newMessage.textContent = '해시태그는 컴마로 구분해주세요.';
-//             newMessage.style.color = 'red';
-//             hashtagInput.parentNode.insertBefore(newMessage, hashtagInput.nextSibling);
-//         }
-//         hashtagInput.value = hashtagInput.value.trim();
-//         event.preventDefault();
-//     } else {
-//         if (message) {
-//             message.remove();
-//         }
-//     }
-// }
-//
-//
-// const hashtagInput = document.getElementById('hashtag');
-// hashtagInput.addEventListener('focus', addHashtagSymbol);
-// hashtagInput.addEventListener('keyup', handleHashtagInput);
-//
-// function addHashtagSymbol() {
-//     if (!hashtagInput.value.startsWith('#')) {
-//         hashtagInput.value = '#' + hashtagInput.value;
-//     }
-// }
-//
-// function handleHashtagInput(event) {
-//     if (event.keyCode === 32) { // Space key
-//         const message = document.createElement('div');
-//         message.textContent = '해시태그는 컴마로 구분해주세요.';
-//         message.style.color = 'red';
-//         hashtagInput.parentNode.insertBefore(message, hashtagInput.nextSibling);
-//         hashtagInput.value = hashtagInput.value.trim();
-//         event.preventDefault();
-//     }
-// }

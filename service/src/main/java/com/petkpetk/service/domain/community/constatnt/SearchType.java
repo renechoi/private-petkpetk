@@ -12,9 +12,5 @@ public enum SearchType {
     HASHTAG("해시태그"),
     CATEGORY("카테고리");
 
-
-
    private final String description;
-
-
 }
