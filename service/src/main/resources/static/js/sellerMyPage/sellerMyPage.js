@@ -1,9 +1,13 @@
+
+
 function openNewInfoBox() {
     var originalInformation = document.getElementById("originalInformation");
     var newUserInformationForm = document.getElementById("newUserInformationForm");
 
     originalInformation.style.display = "none";
     newUserInformationForm.style.display = "block";
+
+    $("#checkNickName").val(1);
 }
 
 function hideNewInfoBox() {
@@ -148,6 +152,11 @@ $("#newNickName").on("keyup", function () {
     var checkNickTxt = document.getElementById("checkNickTxt");
         checkNickTxt.textContent = "";
     $("#checkNickName").val("");
+
+    if ($("#newNickName").val() == $("#nickName").text()) {
+        $("#checkNickName").val(1);
+
+    }
 });
 
 var newPassForm = document.getElementById("newPassForm");
@@ -194,11 +203,15 @@ newPassForm.addEventListener('submit', function (event) {
 
 function checkNick() {
     var checkNickTxt = document.getElementById("checkNickTxt");
+    if ($("#newNickName").val() == "") {
+        checkNickTxt.textContent = "";
+        $("#checkNickName").val("");
+    } else {
     $.ajax({
         url: "/api/checkNickName",
         type: "post",
         data : {
-            nickName : $("#newNickName").val(),
+            nickname : $("#newNickName").val(),
             email: $("#userEmail").val()
         },
         dataType: "json",
@@ -209,13 +222,21 @@ function checkNick() {
                 checkNickTxt.style.color = "#ff3b57";
                 $("#checkNickName").val("");
             } else {
-                checkNickTxt.textContent = "사용 가능한 닉네임입니다.";
-                checkNickTxt.style.color = "#9a9f73";
-                $("#checkNickName").val(1);
+
+                if ($("#newNickName").val() == $("#nickName").text()) {
+                    checkNickTxt.textContent = "";
+                    $("#checkNickName").val(1);
+
+                } else {
+                    checkNickTxt.textContent = "사용 가능한 닉네임입니다.";
+                    checkNickTxt.style.color = "#9a9f73";
+                    $("#checkNickName").val(1);
+
+                }
             }
         }
 
-    })
+    })}
 }
 
 var profile;
@@ -240,11 +261,13 @@ function showNewProfileBox() {
     newProfileBox.style.display = "flex";
     changeProfileBtn.style.display = "none";
 }
+
 function cancelNewProfile() {
     var newProfileBox = document.getElementById("newProfileBox");
     var changeProfileBtn = document.getElementById("changeProfileBtn");
     var originalProfile = document.getElementById("originalProfile");
     var userProfileImage = document.getElementById("userProfileImage");
+    $("#isProfileDeleted").val(false);
 
     userProfileImage.setAttribute("src", originalProfile.value);
     newProfileBox.style.display = "none";
@@ -253,10 +276,8 @@ function cancelNewProfile() {
 
 function deleteProfile() {
     var userProfileImage = document.getElementById("userProfileImage");
-    var uniqueImageName = document.getElementById("uniqueImageName");
-    if (uniqueImageName) {
-        uniqueImageName.value = "이미지삭제"
-    }
+    $("#isProfileDeleted").val(true);
+
     userProfileImage.setAttribute("src", "/images/basicProfile.png");
 
 }
